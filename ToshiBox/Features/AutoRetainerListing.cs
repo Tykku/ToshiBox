@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
+using Dalamud.Game.ClientState.Keys;
 using Dalamud.Game.Network.Structures;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
@@ -13,6 +14,7 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using ImGuiNET;
 using ToshiBox.Common;
 
 namespace ToshiBox.Features;
@@ -87,7 +89,8 @@ public partial class AutoRetainerListing
 
     private void OnRetainerSell(AddonEvent eventType, AddonArgs addonInfo)
     {
-        switch (eventType)
+        if (ImGui.GetIO().KeyShift) return;
+            switch (eventType)
         {
             case AddonEvent.PostSetup:
                 if (taskManager.IsBusy) return;
@@ -277,14 +280,15 @@ public partial class AutoRetainerListing
         return false;
     }
 
-    private readonly Dictionary<string, string>? resourceData;
-    private readonly Dictionary<string, string>? fbResourceData;
+    private readonly Dictionary<string, string> resourceData = new Dictionary<string, string>();
+    private readonly Dictionary<string, string> fbResourceData =new Dictionary<string, string>();
 
     public SeString GetSeString(string key, params object[] args)
     {
         var format = resourceData.TryGetValue(key, out var resValue) ? resValue : fbResourceData.GetValueOrDefault(key);
         var ssb = new SeStringBuilder();
         var lastIndex = 0;
+        if (format == null) format = "Item not found on market, hold left shift to manually post";
 
         ssb.AddUiForeground($"[{nameof(ToshiBox)}]", 34);
         foreach (var match in SeStringRegex().Matches(format).Cast<Match>())
@@ -300,7 +304,7 @@ public partial class AutoRetainerListing
                 }
                 else
                 {
-                    ssb.AddUiForeground(args[argIndex].ToString(), 2);
+                    ssb.AddUiForeground(args[argIndex].ToString() ?? string.Empty, 2);
                 }
             }
         }
