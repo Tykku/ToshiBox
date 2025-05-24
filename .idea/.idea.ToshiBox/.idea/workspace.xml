@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="780ba450-9a1a-463d-abfd-5ab98b3838e7" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ToshiBox/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ToshiBox/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ToshiBox/ToshiBox.json" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/ToshiBox.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -36,6 +37,8 @@
 }</component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/a7201434f979f0228eee0a9314347d31fa6bd5ab6dbbc312fbcfa46c762773f/Events.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Plugins/ToshiBox/ToshiBox/ToshiBox.json" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock://D:/Plugins/ToshiBox/ToshiBox/ToshiBox.json" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
@@ -51,7 +54,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "FAFO",
+    "git-widget-placeholder": "Merging main",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",

@@ -5,5 +5,5 @@
   "DalamudApiLevel": 12,
   "Punchline": "Collection of things I want",
   "Description": "Currently only undercuts items on the market board by 1 gil, no settings. UI to come later.",
-  "Tags": ["retainer", "market"]
+  "Tags": ["retainer", "market"]  
 }
