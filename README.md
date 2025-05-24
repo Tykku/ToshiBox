@@ -1,5 +1,8 @@
-A Collection of plugins and ideas
-Currently containts:
+# ToshiBox Plugins
+
+A collection of plugins and ideas which currently contains:
 1. Market Bot
 2. Cute photo
-3. that is all
+3. That is all
+
+![ToshiBox Icon](https://github.com/Tykku/ToshiBox/blob/main/res/plugin/Icon.png?raw=true)
