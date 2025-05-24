@@ -5,24 +5,41 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="780ba450-9a1a-463d-abfd-5ab98b3838e7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ToshiBox.sln" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ToshiBox/ToshiBox.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ToshiBox/ToshiBox.csproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ToshiBox/Common/Config.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ToshiBox/Common/Events.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ToshiBox/Features/AutoRetainerListing.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ToshiBox/Features/Test/Hello.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ToshiBox/ToshiBox.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ToshiBox/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ToshiBox/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToshiBox.sln" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToshiBox/ToshiBox.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/ToshiBox.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToshiBox/ToshiBox.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/ToshiBox.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JSON File" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/a7201434f979f0228eee0a9314347d31fa6bd5ab6dbbc312fbcfa46c762773f/Events.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo"><![CDATA[{
   "associatedIndex": 5
 }]]></component>
   <component name="ProjectId" id="2xXdKidg6BmZj4mVmSVqsnpBao9" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -36,6 +53,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.keymap",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -54,7 +72,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1748088291104</updated>
-      <workItem from="1748088292286" duration="677000" />
+      <workItem from="1748088292286" duration="9911000" />
     </task>
     <servers />
   </component>

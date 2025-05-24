@@ -1,10 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net9.0-windows</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <DalamudLibPath>$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>
@@ -53,6 +54,14 @@
             <Private>false</Private>
         </Reference>
 
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\ECommons\ECommons\ECommons.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="UI\" />
     </ItemGroup>
 
 </Project>
