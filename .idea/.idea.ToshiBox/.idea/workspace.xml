@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="780ba450-9a1a-463d-abfd-5ab98b3838e7" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/ToshiBox/ToshiBox.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/ToshiBox.csproj" afterDir="false" />
-    </list>
+    <list default="true" id="780ba450-9a1a-463d-abfd-5ab98b3838e7" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -83,6 +81,7 @@
       <workItem from="1748101634313" duration="179000" />
       <workItem from="1748107672826" duration="833000" />
       <workItem from="1748113685611" duration="88000" />
+      <workItem from="1748113856464" duration="662000" />
     </task>
     <servers />
   </component>
