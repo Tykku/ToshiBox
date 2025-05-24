@@ -19,7 +19,7 @@
         <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-        <OutputPath>C:\Users\Tykku\AppData\Roaming\XIVLauncher\devPlugins\ToshiBox\</OutputPath>
+        <OutputPath>$(APPDATA)\XIVLauncher\devPlugins\ToshiBox\</OutputPath>
         <NoWarn>CS1591</NoWarn>
     </PropertyGroup>
 
