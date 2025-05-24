@@ -3,6 +3,7 @@
   "Name": "ToshiBox",
   "InternalName": "ToshiBox",
   "DalamudApiLevel": 12,
-  "Punchline": "Don't look",
-  "Description": "Box of wonders"
+  "Punchline": "Collection of things I want",
+  "Description": "Currently only undercuts items on the market board by 1 gil, no settings. UI to come later.",
+  "Tags": ["retainer", "market"]
 }
