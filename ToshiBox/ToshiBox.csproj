@@ -6,8 +6,39 @@
         <Nullable>enable</Nullable>
         <DalamudLibPath>$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Authors>Toshi</Authors>
+        <Description>Collection of plugins</Description>
+        <Copyright>Toshi</Copyright>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+        <Platforms>x64</Platforms>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <OutputPath>C:\Users\Tykku\AppData\Roaming\XIVLauncher\devPlugins\ToshiBox\</OutputPath>
+        <NoWarn>CS1591</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+        <Platforms>x64</Platforms>
+        <Nullable>enable</Nullable>
+        <LangVersion>preview</LangVersion>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <OutputPath>bin\Release</OutputPath>
+        <NoWarn>CS1591</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Content Include="..\res\plugin\icon.png" Link="images\icon.png" CopyToOutputDirectory="PreserveNewest" Visible="false"/>
+    </ItemGroup>
+    
     <ItemGroup>
         <PackageReference Include="DalamudPackager" Version="12.0.0" />
     </ItemGroup>
