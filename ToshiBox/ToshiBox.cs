@@ -35,7 +35,7 @@ namespace ToshiBox
             ECommonsMain.Init(pluginInterface, this);
 
             EventInstance = new Events();
-            ConfigInstance = Config.LoadConfig();
+            ConfigInstance = Config.Load(pluginInterface);
             AutoRetainerListingInstance = new AutoRetainerListing(EventInstance, ConfigInstance);
             AutoRetainerListingInstance.Enable();
 
