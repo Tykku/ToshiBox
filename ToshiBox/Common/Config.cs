@@ -1,30 +1,33 @@
-using ECommons.DalamudServices;
+using Dalamud.Configuration;
+using Dalamud.Plugin;
 using Newtonsoft.Json;
 using ToshiBox.Features;
 
 namespace ToshiBox.Common;
 
-public class Config
+public class Config : IPluginConfiguration
 {
-    public static string FilePath => Svc.PluginInterface.ConfigFile.FullName;
+    public int Version { get; set; } = 1;
 
-    public void SaveConfig()
+    public AutoRetainerListing.MarketAdjusterConfiguration MarketAdjusterConfiguration { get; set; } = new();
+
+    [JsonIgnore]
+    private IDalamudPluginInterface? _pluginInterface;
+
+    public void Initialize(IDalamudPluginInterface pluginInterface)
     {
-        var json = JsonConvert.SerializeObject(this, Formatting.Indented);
-        File.WriteAllText(FilePath, json);
+        _pluginInterface = pluginInterface;
     }
 
-    public static Config LoadConfig()
+    public void Save()
     {
-        if (File.Exists(FilePath))
-        {
-            var json = JsonConvert.DeserializeObject<Config>(FilePath);
-            if (json != null) return json;
-        }
-
-        return new Config();
+        _pluginInterface?.SavePluginConfig(this);
     }
 
-    public AutoRetainerListing.MarketAdjusterConfiguration MarketAdjusterConfiguration { get; set; } =
-        new AutoRetainerListing.MarketAdjusterConfiguration();
+    public static Config Load(IDalamudPluginInterface pluginInterface)
+    {
+        var config = pluginInterface.GetPluginConfig() as Config ?? new Config();
+        config.Initialize(pluginInterface);
+        return config;
+    }
 }

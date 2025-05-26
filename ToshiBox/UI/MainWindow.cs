@@ -34,7 +34,7 @@ namespace ToshiBox.UI
             if (ImGui.Checkbox("Enable Market Adjuster", ref marketAdjusterEnabled))
             {
                 _config.MarketAdjusterConfiguration.Enabled = marketAdjusterEnabled;
-                _config.SaveConfig();
+                _config.Save();
             }
             
             ImGui.NextColumn();
@@ -50,7 +50,7 @@ namespace ToshiBox.UI
             {
                 if (priceReduction < 0) priceReduction = 0;
                 _config.MarketAdjusterConfiguration.PriceReduction = priceReduction;
-                _config.SaveConfig();
+                _config.Save();
             }
 
             int lowestPrice = _config.MarketAdjusterConfiguration.LowestAcceptablePrice;
@@ -58,24 +58,25 @@ namespace ToshiBox.UI
             {
                 if (lowestPrice < 0) lowestPrice = 0;
                 _config.MarketAdjusterConfiguration.LowestAcceptablePrice = lowestPrice;
-                _config.SaveConfig();
+                _config.Save();
             }
-
-            bool separateNQHQ = _config.MarketAdjusterConfiguration.SeparateNQAndHQ;
-            if (ImGui.Checkbox("Separate NQ and HQ", ref separateNQHQ))
-            {
-                _config.MarketAdjusterConfiguration.SeparateNQAndHQ = separateNQHQ;
-                _config.SaveConfig();
-            }
-
+            
             int maxReduction = _config.MarketAdjusterConfiguration.MaxPriceReduction;
             if (ImGui.InputInt("Max Price Reduction (0 = no limit)", ref maxReduction))
             {
                 if (maxReduction < 0) maxReduction = 0;
                 _config.MarketAdjusterConfiguration.MaxPriceReduction = maxReduction;
-                _config.SaveConfig();
+                _config.Save();
             }
 
+
+            bool separateNQHQ = _config.MarketAdjusterConfiguration.SeparateNQAndHQ;
+            if (ImGui.Checkbox("Separate NQ and HQ", ref separateNQHQ))
+            {
+                _config.MarketAdjusterConfiguration.SeparateNQAndHQ = separateNQHQ;
+                _config.Save();
+            }
+            
             ImGui.PopItemWidth();
             ImGui.Columns(1); 
         }
