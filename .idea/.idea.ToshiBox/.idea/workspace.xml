@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="780ba450-9a1a-463d-abfd-5ab98b3838e7" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ToshiBox/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ToshiBox/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToshiBox/Common/Config.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/Common/Config.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,6 +86,8 @@
       <workItem from="1748113685611" duration="88000" />
       <workItem from="1748113856464" duration="662000" />
       <workItem from="1748295720565" duration="727000" />
+      <workItem from="1748297993063" duration="155000" />
+      <workItem from="1748298175860" duration="680000" />
     </task>
     <servers />
   </component>

@@ -9,9 +9,9 @@ public class Config : IEzConfig
 
 public class MarketAdjusterConfiguration
 {
+    public bool Enabled = true;
     public int PriceReduction = 1;
     public int LowestAcceptablePrice = 100;
-    public bool SeparateNQAndHQ = true;
     public int MaxPriceReduction = 0;
-    public bool Enabled = true;
+    public bool SeparateNQAndHQ = true;
 }
