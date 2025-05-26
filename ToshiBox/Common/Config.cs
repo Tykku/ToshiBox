@@ -1,33 +1,17 @@
-using Dalamud.Configuration;
-using Dalamud.Plugin;
-using Newtonsoft.Json;
-using ToshiBox.Features;
+using ECommons.Configuration;
 
 namespace ToshiBox.Common;
 
-public class Config : IPluginConfiguration
+public class Config : IEzConfig
 {
-    public int Version { get; set; } = 1;
+    public MarketAdjusterConfiguration MarketAdjusterConfiguration = new();
+}
 
-    public AutoRetainerListing.MarketAdjusterConfiguration MarketAdjusterConfiguration { get; set; } = new();
-
-    [JsonIgnore]
-    private IDalamudPluginInterface? _pluginInterface;
-
-    public void Initialize(IDalamudPluginInterface pluginInterface)
-    {
-        _pluginInterface = pluginInterface;
-    }
-
-    public void Save()
-    {
-        _pluginInterface?.SavePluginConfig(this);
-    }
-
-    public static Config Load(IDalamudPluginInterface pluginInterface)
-    {
-        var config = pluginInterface.GetPluginConfig() as Config ?? new Config();
-        config.Initialize(pluginInterface);
-        return config;
-    }
+public class MarketAdjusterConfiguration
+{
+    public int PriceReduction = 1;
+    public int LowestAcceptablePrice = 100;
+    public bool SeparateNQAndHQ = true;
+    public int MaxPriceReduction = 0;
+    public bool Enabled = true;
 }

@@ -1,8 +1,8 @@
 using ImGuiNET;
 using Dalamud.Interface.Windowing;
+using ECommons.Configuration;
 using ToshiBox.Common;
 using ToshiBox.Features;
-using System.Numerics;
 
 namespace ToshiBox.UI
 {
@@ -34,7 +34,7 @@ namespace ToshiBox.UI
             if (ImGui.Checkbox("Enable Market Adjuster", ref marketAdjusterEnabled))
             {
                 _config.MarketAdjusterConfiguration.Enabled = marketAdjusterEnabled;
-                _config.Save();
+                EzConfig.Save();
             }
             
             ImGui.NextColumn();
@@ -50,7 +50,7 @@ namespace ToshiBox.UI
             {
                 if (priceReduction < 0) priceReduction = 0;
                 _config.MarketAdjusterConfiguration.PriceReduction = priceReduction;
-                _config.Save();
+                EzConfig.Save();
             }
 
             int lowestPrice = _config.MarketAdjusterConfiguration.LowestAcceptablePrice;
@@ -58,7 +58,7 @@ namespace ToshiBox.UI
             {
                 if (lowestPrice < 0) lowestPrice = 0;
                 _config.MarketAdjusterConfiguration.LowestAcceptablePrice = lowestPrice;
-                _config.Save();
+                EzConfig.Save();
             }
             
             int maxReduction = _config.MarketAdjusterConfiguration.MaxPriceReduction;
@@ -66,7 +66,7 @@ namespace ToshiBox.UI
             {
                 if (maxReduction < 0) maxReduction = 0;
                 _config.MarketAdjusterConfiguration.MaxPriceReduction = maxReduction;
-                _config.Save();
+                EzConfig.Save();
             }
 
 
@@ -74,7 +74,7 @@ namespace ToshiBox.UI
             if (ImGui.Checkbox("Separate NQ and HQ", ref separateNQHQ))
             {
                 _config.MarketAdjusterConfiguration.SeparateNQAndHQ = separateNQHQ;
-                _config.Save();
+                EzConfig.Save();
             }
             
             ImGui.PopItemWidth();
