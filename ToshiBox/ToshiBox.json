@@ -4,7 +4,7 @@
   "InternalName": "ToshiBox",
   "DalamudApiLevel": 12,
   "Punchline": "Collection of things I want",
-  "Description": "Currently only undercuts items on the market board by 1 gil, no settings. UI to come later.",
+  "Description": "Opens with /toshibox",
   "RepoUrl": "https://github.com/Tykku/ToshiBox",
   "IconURL": "https://github.com/Tykku/ToshiBox/blob/main/res/plugin/Icon.png?raw=true",
   "Changelog": "Pfff no",

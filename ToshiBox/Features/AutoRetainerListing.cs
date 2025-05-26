@@ -1,7 +1,6 @@
 using System.Text.RegularExpressions;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
-using Dalamud.Game.ClientState.Keys;
 using Dalamud.Game.Network.Structures;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
@@ -33,6 +32,8 @@ public partial class AutoRetainerListing
     }
     public class MarketAdjusterConfiguration
     {
+        public bool Enabled { get; set; } = true;
+        
         public int PriceReduction = 1;
         
         public int LowestAcceptablePrice = 100;
