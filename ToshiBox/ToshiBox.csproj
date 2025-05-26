@@ -90,9 +90,5 @@
     <ItemGroup>
       <ProjectReference Include="..\ECommons\ECommons\ECommons.csproj" />
     </ItemGroup>
-    
-    <ItemGroup>
-      <Folder Include="UI\" />
-    </ItemGroup>
 
 </Project>
