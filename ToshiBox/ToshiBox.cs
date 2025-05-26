@@ -6,7 +6,7 @@ using ToshiBox.Common;
 using ToshiBox.Features;
 using ToshiBox.UI;
 using Dalamud.Plugin.Services;
-using System;
+using ECommons.Configuration;
 
 namespace ToshiBox
 {
@@ -35,7 +35,7 @@ namespace ToshiBox
             ECommonsMain.Init(pluginInterface, this);
 
             EventInstance = new Events();
-            ConfigInstance = Config.Load(pluginInterface);
+            ConfigInstance = EzConfig.Init<Config>();
             AutoRetainerListingInstance = new AutoRetainerListing(EventInstance, ConfigInstance);
             AutoRetainerListingInstance.Enable();
 
