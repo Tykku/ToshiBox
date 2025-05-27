@@ -1,5 +1,4 @@
 name: Publish
-
 on:
   push:
     tags:
@@ -10,7 +9,6 @@ jobs:
     permissions:
       contents: write
     runs-on: windows-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -48,46 +46,43 @@ jobs:
           files: ./build/ToshiBox.zip
           token: ${{ secrets.REPO_DEPLOY_TOKEN }}
 
-      # --- NEW: Generate manifest.toml ---
       - name: Create manifest.toml
         run: |
-          @"
-          [plugin]
-          internal_name = "ToshiBox"
-          display_name = "ToshiBox"
-          author = "Toshi"
-          description = "My own playground for plugin dev"
-          punchline = "Hello there"
-          repo_url = "https://github.com/Tykku/ToshiBox"
-          tags = ["ToshiBox"]
-          icon_url = "https://tykku.github.io/ToshiBox/release/images/icon.png"
-          assembly_version = "${{ env.tag }}"
-          dalamud_api_level = 12
-          download_link_install = "https://tykku.github.io/ToshiBox/release/ToshiBox.zip"
-          changelog = "Auto-published version ${{ env.tag }}"
+          @"          
+          [plugin]          
+          internal_name = "ToshiBox"          
+          display_name = "ToshiBox"          
+          author = "Toshi"          
+          description = "My own playground for plugin dev"          
+          punchline = "Hello there"          
+          repo_url = "https://github.com/Tykku/ToshiBox"          
+          tags = ["ToshiBox"]          
+          icon_url = "https://tykku.github.io/ToshiBox/release/images/icon.png"          
+          assembly_version = "${{ env.tag }}"          
+          dalamud_api_level = 12          
+          download_link_install = "https://tykku.github.io/ToshiBox/release/ToshiBox.zip"          
+          changelog = "Auto-published version ${{ env.tag }}"          
           "@ | Out-File -Encoding utf8 -FilePath .\release\manifest.toml
 
       - name: Copy Built Files to Release Folder
         run: |
           Copy-Item .\build\ToshiBox.zip .\release\ToshiBox.zip -Force
 
-      # --- NEW: Generate pluginmaster.json using Dalamud.RepoTool ---
-      - name: Download Dalamud.RepoTool
-        run: |
-          Invoke-WebRequest -Uri https://goatcorp.github.io/repo.json -OutFile repo.json
-          $tool = (Invoke-RestMethod -Uri https://api.github.com/repos/goatcorp/Dalamud.RepoTool/releases/latest).assets | Where-Object { $_.name -like "*RepoTool*.zip" }
-          Invoke-WebRequest -Uri $tool.browser_download_url -OutFile RepoTool.zip
-          Expand-Archive RepoTool.zip -DestinationPath .\RepoTool
+      # --- NEW: Run Python script to generate pluginmaster.json ---
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
 
-      - name: Generate pluginmaster.json
-        run: |
-          .\RepoTool\Dalamud.RepoTool.exe master .\release > pluginmaster.json
+      - name: Generate pluginmaster.json with Python script
+        run: python generate_pluginmaster.py
+        working-directory: .  # adjust if you put your script elsewhere
 
-      # --- NEW: Commit and push to main branch ---
+      # --- NEW: Commit and push updated files ---
       - name: Commit and Push to GitHub Pages branch
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add release/ pluginmaster.json
-          git commit -m "Update pluginmaster.json and release files for ${{ env.tag }}"
+          git commit -m "Update pluginmaster.json and release files for ${{ env.tag }}" || echo "No changes to commit"
           git push origin main
