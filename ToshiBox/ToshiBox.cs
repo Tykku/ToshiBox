@@ -1,12 +1,12 @@
 ﻿using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
-using Dalamud.Game.Command;
 using ECommons;
+using ECommons.Commands;
+using ECommons.Configuration;
+using ECommons.DalamudServices;
 using ToshiBox.Common;
 using ToshiBox.Features;
 using ToshiBox.UI;
-using Dalamud.Plugin.Services;
-using ECommons.Configuration;
 
 namespace ToshiBox
 {
@@ -14,61 +14,70 @@ namespace ToshiBox
     {
         private readonly WindowSystem _windowSystem = new("ToshiBox");
         private MainWindow _mainWindow;
-        
+
         public Events EventInstance;
         public Config ConfigInstance;
         public AutoRetainerListing AutoRetainerListingInstance;
-        
+
         private readonly IDalamudPluginInterface _pluginInterface;
-        private readonly ICommandManager _commandManager;
-        
-        private readonly Action _openConfigUiAction;
-        private readonly Action _openMainUiAction;
 
         public string Name => "ToshiBox";
 
-        public ToshiBox(IDalamudPluginInterface pluginInterface, ICommandManager commandManager)
+        public ToshiBox(IDalamudPluginInterface pluginInterface)
         {
             _pluginInterface = pluginInterface;
-            _commandManager = commandManager;
 
+            // Initialize ECommons and config
             ECommonsMain.Init(pluginInterface, this);
 
             EventInstance = new Events();
             ConfigInstance = EzConfig.Init<Config>();
             AutoRetainerListingInstance = new AutoRetainerListing(EventInstance, ConfigInstance);
-            AutoRetainerListingInstance.Enable();
+
+            AutoRetainerListingInstance.IsEnabled();
 
             _mainWindow = new MainWindow(AutoRetainerListingInstance, ConfigInstance);
             _windowSystem.AddWindow(_mainWindow);
 
-            _openConfigUiAction = () => _mainWindow.IsOpen = true;
-            _openMainUiAction = () => _mainWindow.IsOpen = true;
-
             _pluginInterface.UiBuilder.Draw += _windowSystem.Draw;
-            _pluginInterface.UiBuilder.OpenConfigUi += _openConfigUiAction;
-            _pluginInterface.UiBuilder.OpenMainUi += _openMainUiAction;
-
-            _commandManager.AddHandler("/toshibox", new CommandInfo(OpenConfig)
-            {
-                HelpMessage = "Toggle the ToshiBox settings window"
-            });
+            _pluginInterface.UiBuilder.OpenConfigUi += () => _mainWindow.IsOpen = true;
+            _pluginInterface.UiBuilder.OpenMainUi += () => _mainWindow.IsOpen = true;
         }
 
-        private void OpenConfig(string command, string args)
+        [Cmd("/toshibox", "Opens main settings window")]
+        public void OnCommand(string command, string args)
         {
-            _mainWindow.IsOpen = !_mainWindow.IsOpen;
+            if (string.Equals(args, "toggleshangriladida009"))
+            {
+                ConfigInstance.MarketAdjusterConfiguration.Enabled = !ConfigInstance.MarketAdjusterConfiguration.Enabled;
+                AutoRetainerListingInstance.IsEnabled();
+                EzConfig.Save();
+
+                Svc.Chat.Print($"If you know you know {(ConfigInstance.MarketAdjusterConfiguration.Enabled ? "enabled" : "disabled")}");
+            }
+            else
+            {
+                _mainWindow.IsOpen = !_mainWindow.IsOpen;
+            }
         }
+
+        /*[Cmd("/toshibox toggleshangriladida009", "Toggles something...", false)]
+        public void ToggleAutoRetainerCheat(string command, string args)
+        {
+            ConfigInstance.MarketAdjusterConfiguration.Enabled = !ConfigInstance.MarketAdjusterConfiguration.Enabled;
+            AutoRetainerListingInstance.IsEnabled();
+            EzConfig.Save();
+
+            Svc.Chat.Print($"If you know you know {(ConfigInstance.MarketAdjusterConfiguration.Enabled ? "enabled" : "disabled")}");
+        }*/
 
         public void Dispose()
         {
             AutoRetainerListingInstance.Disable();
 
             _pluginInterface.UiBuilder.Draw -= _windowSystem.Draw;
-            _pluginInterface.UiBuilder.OpenConfigUi -= _openConfigUiAction;
-            _pluginInterface.UiBuilder.OpenMainUi -= _openMainUiAction;
-
-            _commandManager.RemoveHandler("/toshibox");
+            _pluginInterface.UiBuilder.OpenConfigUi -= () => _mainWindow.IsOpen = true;
+            _pluginInterface.UiBuilder.OpenMainUi -= () => _mainWindow.IsOpen = true;
 
             ECommonsMain.Dispose(); // LAST
         }

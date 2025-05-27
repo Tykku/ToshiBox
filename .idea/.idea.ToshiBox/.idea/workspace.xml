@@ -5,9 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="780ba450-9a1a-463d-abfd-5ab98b3838e7" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ToshiBox/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ToshiBox/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ToshiBox/Common/Config.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/Common/Config.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToshiBox/Common/Events.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/Common/Events.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToshiBox/Features/AutoRetainerListing.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/Features/AutoRetainerListing.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToshiBox/ToshiBox.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/ToshiBox.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToshiBox/UI/MainWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/UI/MainWindow.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,6 +42,7 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/831d23e56149cd59c40fc00c7feb7c5334bd19c4/src/libraries/System.Private.CoreLib/src/System/Numerics/Vector2.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/a7201434f979f0228eee0a9314347d31fa6bd5ab6dbbc312fbcfa46c762773f/Events.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c0accbf6eec3352f67bdbb51a1a62a223472bc342b61c9b0beb7ded733f46a/ICommandManager.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -55,7 +59,7 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Hide-cheat&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -88,6 +92,7 @@
       <workItem from="1748295720565" duration="727000" />
       <workItem from="1748297993063" duration="155000" />
       <workItem from="1748298175860" duration="680000" />
+      <workItem from="1748326409426" duration="952000" />
     </task>
     <servers />
   </component>
@@ -98,5 +103,9 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

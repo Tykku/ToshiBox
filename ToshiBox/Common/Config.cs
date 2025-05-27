@@ -1,17 +1,18 @@
 using ECommons.Configuration;
 
-namespace ToshiBox.Common;
-
-public class Config : IEzConfig
+namespace ToshiBox.Common
 {
-    public MarketAdjusterConfiguration MarketAdjusterConfiguration = new();
-}
+    public class Config : IEzConfig
+    {
+        public MarketAdjusterConfiguration MarketAdjusterConfiguration = new();
+    }
 
-public class MarketAdjusterConfiguration
-{
-    public bool Enabled = true;
-    public int PriceReduction = 1;
-    public int LowestAcceptablePrice = 100;
-    public int MaxPriceReduction = 0;
-    public bool SeparateNQAndHQ = true;
+    public class MarketAdjusterConfiguration
+    {
+        public bool Enabled = false; // Controls if Auto Retainer Cheat is active
+        public int PriceReduction = 1;
+        public int LowestAcceptablePrice = 100;
+        public int MaxPriceReduction = 0;
+        public bool SeparateNQAndHQ = true;
+    }
 }

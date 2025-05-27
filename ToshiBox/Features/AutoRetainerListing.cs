@@ -30,33 +30,25 @@ public partial class AutoRetainerListing
         _config = config;
         taskManager = new TaskManager();
     }
-    public class MarketAdjusterConfiguration
-    {
-        public bool Enabled { get; set; } = true;
-        
-        public int PriceReduction = 1;
-        
-        public int LowestAcceptablePrice = 100;
-
-        public bool SeparateNQAndHQ = true;
-        
-        public int MaxPriceReduction = 0;
-    }
 
     private static int CurrentItemPrice;
     private static int CurrentMarketLowestPrice;
     private static uint CurrentItemSearchItemID;
     private static bool IsCurrentItemHQ;
     private static unsafe RetainerManager.Retainer* CurrentRetainer;
-
-    public class Listing
+    
+    public void IsEnabled()
     {
-        public uint ID;
-        public int Price;
-        public int MarketLowest;
-        public string Retainer = "";
+        if (_config.MarketAdjusterConfiguration.Enabled)
+        {
+            Enable();
+        }
+        else
+        {
+            Disable();
+        }
     }
-
+    
     public void Enable()
     {
         Svc.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, "RetainerSellList", OnRetainerSellList); // List of items
@@ -260,9 +252,13 @@ public partial class AutoRetainerListing
                 return true;
             }
 
-            if (_config.MarketAdjusterConfiguration.MaxPriceReduction != 0 && CurrentItemPrice - CurrentMarketLowestPrice > _config.MarketAdjusterConfiguration.LowestAcceptablePrice)
+            if (_config.MarketAdjusterConfiguration.MaxPriceReduction != 0 &&
+                CurrentItemPrice - CurrentMarketLowestPrice > _config.MarketAdjusterConfiguration.LowestAcceptablePrice)
             {
-                var message = GetSeString("Item has exceeded maximum acceptable reduction, skipping", SeString.CreateItemLink(CurrentItemSearchItemID, IsCurrentItemHQ ? ItemPayload.ItemKind.Hq : ItemPayload.ItemKind.Normal), CurrentMarketLowestPrice, CurrentItemPrice, _config.MarketAdjusterConfiguration.MaxPriceReduction);
+                var message = GetSeString("Item has exceeded maximum acceptable price reduction, skipping",
+                    SeString.CreateItemLink(CurrentItemSearchItemID,
+                        IsCurrentItemHQ ? ItemPayload.ItemKind.Hq : ItemPayload.ItemKind.Normal),
+                    CurrentMarketLowestPrice, CurrentItemPrice, _config.MarketAdjusterConfiguration.MaxPriceReduction);
                 Svc.Chat.Print(message);
 
                 Callback.Fire((AtkUnitBase*)addon, true, 1);
