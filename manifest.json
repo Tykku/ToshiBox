@@ -14,7 +14,7 @@
   "CanUnloadAsync": false,
   "LoadPriority": 0,
   "IsTestingExclusive": false,
-  "IconUrl": "https://raw.githubusercontent.com/Tykku/ToshiBox/refs/heads/main/res/plugin/Icon.png",
+  "IconUrl": "https://raw.githubusercontent.com/Tykku/ToshiBox/refs/heads/main/release/images/Icon.png",
   "Punchline": "Hello there",
   "AcceptsFeedback": true
 }
