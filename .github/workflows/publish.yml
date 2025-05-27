@@ -62,7 +62,7 @@ jobs:
           tags = ["ToshiBox"]
           icon_url = "https://tykku.github.io/ToshiBox/release/images/icon.png"
           assembly_version = "${{ env.tag }}"
-          dalamud_api_level = 9
+          dalamud_api_level = 12
           download_link_install = "https://tykku.github.io/ToshiBox/release/ToshiBox.zip"
           changelog = "Auto-published version ${{ env.tag }}"
           "@ | Out-File -Encoding utf8 -FilePath .\release\manifest.toml
