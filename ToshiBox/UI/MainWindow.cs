@@ -12,7 +12,7 @@ namespace ToshiBox.UI
         private readonly Config _config;
 
         public MainWindow(AutoRetainerListing feature, Config config)
-             : base("ToshiBox Settings", ImGuiWindowFlags.None)
+            : base("ToshiBox Settings", ImGuiWindowFlags.None)
         {
             _feature = feature;
             _config = config;
@@ -27,10 +27,19 @@ namespace ToshiBox.UI
             ImGui.Columns(2, null, true);
             ImGui.SetColumnWidth(0, leftColumnWidth);
 
-            // LEFT COLUMN
+            // HEADER ROW — Both columns, without vertical spacing
             ImGui.Text("Features");
+
+            ImGui.NextColumn();
+            ImGui.Text("Settings");
+
+            ImGui.NextColumn();
+
+            ImGui.NextColumn();
             ImGui.Separator();
 
+            // LEFT COLUMN CONTENT
+            ImGui.NextColumn();
             if (_config.MarketAdjusterConfiguration.Enabled)
             {
                 bool marketAdjusterEnabled = _config.MarketAdjusterConfiguration.Enabled;
@@ -41,12 +50,8 @@ namespace ToshiBox.UI
                 }
             }
 
+            // RIGHT COLUMN CONTENT
             ImGui.NextColumn();
-
-            // RIGHT COLUMN
-            ImGui.Text("Auto Retainer Listing Settings");
-            ImGui.Separator();
-
             if (_config.MarketAdjusterConfiguration.Enabled)
             {
                 float inputWidth = 250f;
@@ -85,8 +90,14 @@ namespace ToshiBox.UI
 
                 ImGui.PopItemWidth();
             }
-            ImGui.Text("There's nothing here yet, stay tuned.");
+            else
+            {
+                ImGui.Text("Nothing Here Yet");
+            }
+
             ImGui.Columns(1);
         }
+
     }
 }
+
