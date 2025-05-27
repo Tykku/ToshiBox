@@ -1,7 +1,7 @@
 # ToshiBox Plugins
 
 A collection of plugins and ideas which currently contains:
-1. Market Bot
+1. ???
 2. Cute photo
 3. That is all
 
