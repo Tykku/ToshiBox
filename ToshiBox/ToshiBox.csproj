@@ -36,7 +36,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="..\res\plugin\icon.png" Link="images\icon.png" CopyToOutputDirectory="PreserveNewest" Visible="false"/>
+        <Content Include="..\release\images\icon.png" Link="images\icon.png" CopyToOutputDirectory="PreserveNewest" Visible="false"/>
     </ItemGroup>
     
     <ItemGroup>

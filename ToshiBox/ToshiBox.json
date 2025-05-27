@@ -3,13 +3,12 @@
   "Name": "ToshiBox",
   "InternalName": "ToshiBox",
   "DalamudApiLevel": 12,
-  "Punchline": "Collection of things I want",
-  "Description": "Opens with /toshibox",
+  "Punchline": "Hello there",
+  "Description": "My own playground for plugin dev",
   "RepoUrl": "https://github.com/Tykku/ToshiBox",
-  "IconURL": "https://github.com/Tykku/ToshiBox/blob/main/res/plugin/Icon.png?raw=true",
-  "Changelog": "Pfff no",
+  "IconURL": "https://raw.githubusercontent.com/Tykku/ToshiBox/refs/heads/main/release/images/Icon.png",
+  "Changelog": "https://github.com/Tykku/ToshiBox/releases",
   "Tags": [
-    "retainer",
-    "market"
+    "ToshiBox"
   ]
 }
