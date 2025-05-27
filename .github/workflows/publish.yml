@@ -1,4 +1,5 @@
 name: Publish
+
 on:
   push:
     tags:
@@ -13,6 +14,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
+          ref: main
           submodules: recursive
           fetch-depth: 0
 
@@ -68,7 +70,6 @@ jobs:
         run: |
           Copy-Item .\build\ToshiBox.zip .\release\ToshiBox.zip -Force
 
-      # --- NEW: Run Python script to generate pluginmaster.json ---
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
@@ -76,9 +77,8 @@ jobs:
 
       - name: Generate pluginmaster.json with Python script
         run: python generate_pluginmaster.py
-        working-directory: .  # adjust if you put your script elsewhere
+        working-directory: .
 
-      # --- NEW: Commit and push updated files ---
       - name: Commit and Push to GitHub Pages branch
         run: |
           git config user.name "github-actions"
