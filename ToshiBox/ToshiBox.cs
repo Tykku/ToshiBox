@@ -53,7 +53,7 @@ namespace ToshiBox
                 AutoRetainerListingInstance.IsEnabled();
                 EzConfig.Save();
 
-                Svc.Chat.Print($"If you know you know {(ConfigInstance.MarketAdjusterConfiguration.Enabled ? "enabled" : "disabled")}");
+                Svc.Chat.Print($"If you know you know has been {(ConfigInstance.MarketAdjusterConfiguration.Enabled ? "enabled" : "disabled")}");
             }
             else
             {
