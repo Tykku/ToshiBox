@@ -9,7 +9,7 @@ namespace ToshiBox.Common
 
     public class MarketAdjusterConfiguration
     {
-        public bool Enabled = false; // Controls if Auto Retainer Cheat is active
+        public bool Enabled = false;
         public int PriceReduction = 1;
         public int LowestAcceptablePrice = 100;
         public int MaxPriceReduction = 0;
