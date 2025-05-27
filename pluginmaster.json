@@ -1,1 +1,26 @@
-{}
+[
+    {
+        "Author": "Toshi",
+        "Name": "ToshiBox",
+        "Punchline": "Hello there",
+        "Description": "My own playground for plugin dev",
+        "Changelog": "https://github.com/Tykku/ToshiBox/releases",
+        "InternalName": "ToshiBox",
+        "AssemblyVersion": "7.2.5.5",
+        "RepoUrl": "https://github.com/Tykku/ToshiBox",
+        "ApplicableVersion": "any",
+        "Tags": [
+            "ToshiBox"
+        ],
+        "DalamudApiLevel": 12,
+        "LoadPriority": 0,
+        "IconUrl": "https://raw.githubusercontent.com/Tykku/ToshiBox/refs/heads/main/release/images/Icon.png",
+        "DownloadLinkInstall": "https://tykku.github.io/ToshiBox/release/ToshiBox.zip",
+        "IsHide": false,
+        "IsTestingExclusive": false,
+        "DownloadLinkTesting": "https://tykku.github.io/ToshiBox/release/ToshiBox.zip",
+        "DownloadLinkUpdate": "https://tykku.github.io/ToshiBox/release/ToshiBox.zip",
+        "DownloadCount": 0,
+        "LastUpdate": "1748346053"
+    }
+]
