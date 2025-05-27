@@ -11,14 +11,14 @@ namespace ToshiBox.UI
         private readonly AutoRetainerListing _feature;
         private readonly Config _config;
 
-        public MainWindow(AutoRetainerListing feature, Config config) 
-            : base("ToshiBox Settings", ImGuiWindowFlags.None)
+        public MainWindow(AutoRetainerListing feature, Config config)
+             : base("ToshiBox Settings", ImGuiWindowFlags.None)
         {
             _feature = feature;
             _config = config;
             Flags |= ImGuiWindowFlags.NoScrollbar;
         }
-        
+
         public override void Draw()
         {
             float maxLabelWidth = ImGui.CalcTextSize("Enable Market Adjuster").X;
@@ -27,58 +27,66 @@ namespace ToshiBox.UI
             ImGui.Columns(2, null, true);
             ImGui.SetColumnWidth(0, leftColumnWidth);
 
+            // LEFT COLUMN
             ImGui.Text("Features");
             ImGui.Separator();
 
-            bool marketAdjusterEnabled = _config.MarketAdjusterConfiguration.Enabled;
-            if (ImGui.Checkbox("Enable Market Adjuster", ref marketAdjusterEnabled))
+            if (_config.MarketAdjusterConfiguration.Enabled)
             {
-                _config.MarketAdjusterConfiguration.Enabled = marketAdjusterEnabled;
-                EzConfig.Save();
+                bool marketAdjusterEnabled = _config.MarketAdjusterConfiguration.Enabled;
+                if (ImGui.Checkbox("Enable Market Adjuster", ref marketAdjusterEnabled))
+                {
+                    _config.MarketAdjusterConfiguration.Enabled = marketAdjusterEnabled;
+                    EzConfig.Save();
+                }
             }
-            
+
             ImGui.NextColumn();
 
+            // RIGHT COLUMN
             ImGui.Text("Auto Retainer Listing Settings");
             ImGui.Separator();
 
-            float inputWidth = 250f;
-            ImGui.PushItemWidth(inputWidth);
-
-            int priceReduction = _config.MarketAdjusterConfiguration.PriceReduction;
-            if (ImGui.InputInt("Price Reduction", ref priceReduction))
+            if (_config.MarketAdjusterConfiguration.Enabled)
             {
-                if (priceReduction < 0) priceReduction = 0;
-                _config.MarketAdjusterConfiguration.PriceReduction = priceReduction;
-                EzConfig.Save();
-            }
+                float inputWidth = 250f;
+                ImGui.PushItemWidth(inputWidth);
 
-            int lowestPrice = _config.MarketAdjusterConfiguration.LowestAcceptablePrice;
-            if (ImGui.InputInt("Lowest Acceptable Price", ref lowestPrice))
-            {
-                if (lowestPrice < 0) lowestPrice = 0;
-                _config.MarketAdjusterConfiguration.LowestAcceptablePrice = lowestPrice;
-                EzConfig.Save();
-            }
-            
-            int maxReduction = _config.MarketAdjusterConfiguration.MaxPriceReduction;
-            if (ImGui.InputInt("Max Price Reduction (0 = no limit)", ref maxReduction))
-            {
-                if (maxReduction < 0) maxReduction = 0;
-                _config.MarketAdjusterConfiguration.MaxPriceReduction = maxReduction;
-                EzConfig.Save();
-            }
+                int priceReduction = _config.MarketAdjusterConfiguration.PriceReduction;
+                if (ImGui.InputInt("Price Reduction", ref priceReduction))
+                {
+                    if (priceReduction < 0) priceReduction = 0;
+                    _config.MarketAdjusterConfiguration.PriceReduction = priceReduction;
+                    EzConfig.Save();
+                }
 
+                int lowestPrice = _config.MarketAdjusterConfiguration.LowestAcceptablePrice;
+                if (ImGui.InputInt("Lowest Acceptable Price", ref lowestPrice))
+                {
+                    if (lowestPrice < 0) lowestPrice = 0;
+                    _config.MarketAdjusterConfiguration.LowestAcceptablePrice = lowestPrice;
+                    EzConfig.Save();
+                }
 
-            bool separateNQHQ = _config.MarketAdjusterConfiguration.SeparateNQAndHQ;
-            if (ImGui.Checkbox("Separate NQ and HQ", ref separateNQHQ))
-            {
-                _config.MarketAdjusterConfiguration.SeparateNQAndHQ = separateNQHQ;
-                EzConfig.Save();
+                int maxReduction = _config.MarketAdjusterConfiguration.MaxPriceReduction;
+                if (ImGui.InputInt("Max Price Reduction (0 = no limit)", ref maxReduction))
+                {
+                    if (maxReduction < 0) maxReduction = 0;
+                    _config.MarketAdjusterConfiguration.MaxPriceReduction = maxReduction;
+                    EzConfig.Save();
+                }
+
+                bool separateNQHQ = _config.MarketAdjusterConfiguration.SeparateNQAndHQ;
+                if (ImGui.Checkbox("Separate NQ and HQ", ref separateNQHQ))
+                {
+                    _config.MarketAdjusterConfiguration.SeparateNQAndHQ = separateNQHQ;
+                    EzConfig.Save();
+                }
+
+                ImGui.PopItemWidth();
             }
-            
-            ImGui.PopItemWidth();
-            ImGui.Columns(1); 
+            ImGui.Text("There's nothing here yet, stay tuned.");
+            ImGui.Columns(1);
         }
     }
 }
