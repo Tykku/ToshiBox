@@ -5,8 +5,7 @@
   "Description": "My own playground for plugin dev",
   "ApplicableVersion": "any",
   "Tags": [
-    "Custom",
-    "Toshi"
+    "Toshibox"
   ],
   "DalamudApiLevel": 12,
   "LoadRequiredState": 0,
