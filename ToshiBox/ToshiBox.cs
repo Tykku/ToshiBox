@@ -1,4 +1,5 @@
 ﻿using Dalamud.Game.Command;
+using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
 using ECommons;
@@ -63,7 +64,16 @@ namespace ToshiBox
                 ConfigInstance.AutoRetainerListingConfig.Enabled = !ConfigInstance.AutoRetainerListingConfig.Enabled;
                 AutoRetainerListingInstance.IsEnabled();
                 EzConfig.Save();
-                Svc.Chat.Print($"If you know you know has been {(ConfigInstance.AutoRetainerListingConfig.Enabled ? "enabled" : "disabled")}");
+            }
+
+            if (string.Equals(args, "colors"))
+            {
+                var ssb = new SeStringBuilder();
+                for (ushort i = 0; i <= 50; i++) {
+                    ssb.AddUiForeground($"Color ID {i} ", i);
+                    ssb.AddText("\n");
+                }
+                Svc.Chat.Print(ssb.BuiltString);
             }
             else
             {

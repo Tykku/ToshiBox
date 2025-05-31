@@ -32,6 +32,8 @@ namespace ToshiBox.UI
             Flags |= ImGuiWindowFlags.NoScrollbar;
         }
 
+        #region Draw Method
+
         public override void Draw()
         {
             ImGui.BeginChild("ToshiBox_MainChild", new System.Numerics.Vector2(0, 0), false);
@@ -56,55 +58,75 @@ namespace ToshiBox.UI
             ImGui.EndChild();
         }
 
-        private void DrawFeatureList()
-        {
-            float columnWidth = ImGui.GetColumnWidth();
-            float checkboxWidth = ImGui.GetFrameHeight();
-            float spacing = ImGui.GetStyle().ItemSpacing.X;
-            float selectableWidth = columnWidth - checkboxWidth - spacing;
+        #endregion
 
-            // Auto Retainer Listing (only show if enabled)
-            if (_config.AutoRetainerListingConfig.Enabled)
+        #region Feature List
+
+        private void DrawFeatureList()
+{
+    float columnWidth = ImGui.GetColumnWidth();
+    float checkboxWidth = ImGui.GetFrameHeight();
+    float spacing = ImGui.GetStyle().ItemSpacing.X;
+    float selectableWidth = columnWidth - checkboxWidth - spacing;
+    var darkerBg = new System.Numerics.Vector4(0.15f, 0.15f, 0.15f, 1.0f);
+
+    void DrawFeature(string label, string checkboxId, ref bool enabled, SelectedFeature feature, Action onToggle)
+    {
+        ImGui.PushStyleColor(ImGuiCol.ChildBg, darkerBg);
+        ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new System.Numerics.Vector2(4, 4));
+        ImGui.BeginChild(label + "_Group", new System.Numerics.Vector2(columnWidth, 40), true, ImGuiWindowFlags.None);
+        {
+            ImGui.Checkbox(checkboxId, ref enabled);
+            if (ImGui.IsItemDeactivatedAfterEdit())
             {
-                bool enabled = _config.AutoRetainerListingConfig.Enabled;
-                if (ImGui.Checkbox("##AutoRetainerEnabled", ref enabled))
+                onToggle();
+                EzConfig.Save();
+            }
+
+            ImGui.SameLine();
+
+            bool selected = _selectedFeature == feature;
+            if (ImGui.Selectable(label, selected, ImGuiSelectableFlags.None, new(selectableWidth, 0)))
+            {
+                _selectedFeature = feature;
+            }
+        }
+        ImGui.EndChild();
+        ImGui.PopStyleVar();
+        ImGui.PopStyleColor();
+        ImGui.Spacing();
+    }
+
+    // For AutoRetainerListing, hide entire feature when disabled
+    {
+        bool enabled = _config.AutoRetainerListingConfig.Enabled;
+        if (enabled) // only draw if enabled
+        {
+            DrawFeature("Auto Retainer Listing", "##AutoRetainerEnabled", ref enabled,
+                SelectedFeature.AutoRetainerListing, () =>
                 {
                     _config.AutoRetainerListingConfig.Enabled = enabled;
                     _autoRetainerListing.IsEnabled();
-                    EzConfig.Save();
-                }
-
-                ImGui.SameLine();
-
-                bool selected = _selectedFeature == SelectedFeature.AutoRetainerListing;
-                if (ImGui.Selectable("Auto Retainer Listing", selected, ImGuiSelectableFlags.None, new(selectableWidth, 0)))
-                {
-                    _selectedFeature = SelectedFeature.AutoRetainerListing;
-                }
-            }
-
-            // Auto Chest Open
-            {
-                bool enabled = _config.AutoChestOpenConfig.Enabled;
-                if (ImGui.Checkbox("##AutoChestOpenEnabled", ref enabled))
-                {
-                    _config.AutoChestOpenConfig.Enabled = enabled;
-                    _autoChestOpen.IsEnabled();
-                    EzConfig.Save();
-                }
-
-                ImGui.SameLine();
-
-                bool selected = _selectedFeature == SelectedFeature.AutoChestOpen;
-                if (ImGui.Selectable("Auto Chest Open", selected, ImGuiSelectableFlags.None, new(selectableWidth, 0)))
-                {
-                    _selectedFeature = SelectedFeature.AutoChestOpen;
-                }
-            }
+                });
         }
+    }
+
+    // For other features, always draw with frame regardless of enabled state
+    {
+        bool enabled = _config.AutoChestOpenConfig.Enabled;
+        DrawFeature("Auto Chest Open", "##AutoChestOpenEnabled", ref enabled, SelectedFeature.AutoChestOpen,
+            () =>
+            {
+                _config.AutoChestOpenConfig.Enabled = enabled;
+                _autoChestOpen.IsEnabled();
+            });
+    }
+}
 
 
+        #endregion
 
+        #region Settings Panel
 
         private void DrawSettingsPanel()
         {
@@ -121,6 +143,10 @@ namespace ToshiBox.UI
                     break;
             }
         }
+
+        #endregion
+
+        #region AutoRetainerListing
 
         private void DrawAutoRetainerListingSettings()
         {
@@ -162,6 +188,10 @@ namespace ToshiBox.UI
 
             ImGui.PopItemWidth();
         }
+
+        #endregion
+
+        #region AutoChestOpen
 
         private void DrawAutoChestOpenSettings()
         {
@@ -210,5 +240,6 @@ namespace ToshiBox.UI
             ImGui.PopItemWidth();
         }
 
+        #endregion
     }
 }

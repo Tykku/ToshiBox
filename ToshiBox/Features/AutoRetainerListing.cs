@@ -42,10 +42,13 @@ public partial class AutoRetainerListing
         if (_config.AutoRetainerListingConfig.Enabled)
         {
             Enable();
+            Helpers.PrintGlowshi("If you know you know is enabled",45);
+
         }
         else
         {
             Disable();
+            Helpers.PrintGlowshi("If you know you know is disabled",14);
         }
     }
     
@@ -116,23 +119,45 @@ public partial class AutoRetainerListing
             CurrentMarketLowestPrice = 0;
         }
     }
+    private bool AbortIfShiftHeld()
+    {
+        if (ImGui.GetIO().KeyShift)
+        {
+            Helpers.PrintToshi("Aborting task queue: Left Shift was held.");
+            taskManager.Abort();
+            return false;
+        }
+        return true;
+    }
 
     private void EnqueueSingleItem(int index)
     {
         taskManager.Enqueue(() => !SearchRunning);
+
+        taskManager.Enqueue(AbortIfShiftHeld);
         taskManager.Enqueue(() => ClickSellingItem(index));
         taskManager.EnqueueDelay(100);
+
+        taskManager.Enqueue(AbortIfShiftHeld);
         taskManager.Enqueue(ClickAdjustPrice);
         taskManager.EnqueueDelay(100);
+
+        taskManager.Enqueue(AbortIfShiftHeld);
         taskManager.Enqueue(ClickComparePrice);
         taskManager.EnqueueDelay(500);
+
+        taskManager.Enqueue(AbortIfShiftHeld);
         taskManager.DefaultConfiguration.AbortOnTimeout = false;
         taskManager.Enqueue(GetLowestPrice);
+
         taskManager.DefaultConfiguration.AbortOnTimeout = true;
         taskManager.EnqueueDelay(100);
+
+        taskManager.Enqueue(AbortIfShiftHeld);
         taskManager.Enqueue(FillLowestPrice);
         taskManager.EnqueueDelay(800);
     }
+
 
     private static unsafe void GetListings()
     {
@@ -296,7 +321,7 @@ public partial class AutoRetainerListing
             args = new object[] { itemLink }; // Use only the item link
         }
 
-        ssb.AddUiForeground($"[{nameof(ToshiBox)}]", 34);
+        ssb.AddUiForeground($"[{nameof(ToshiBox)}]", 48);
 
         foreach (var match in SeStringRegex().Matches(format).Cast<Match>())
         {
