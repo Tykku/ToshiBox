@@ -24,7 +24,7 @@ namespace ToshiBox.Common
         public bool OpenInHighEndDuty = false;
 
         public float Distance { get; set; } = 1.0f;
-        public float Delay { get; set; } = 0.5f;
+        public float Delay { get; set; } = 0.0f;
     }
 
 }
