@@ -24,7 +24,7 @@ public partial class AutoRetainerListing
     private readonly Config _config;
     private readonly TaskManager taskManager;
     
-    public AutoRetainerListing(Common.Events events, Config config)
+    public AutoRetainerListing(Events events, Config config)
     {
         _events = events;
         _config = config;
@@ -39,7 +39,7 @@ public partial class AutoRetainerListing
     
     public void IsEnabled()
     {
-        if (_config.MarketAdjusterConfiguration.Enabled)
+        if (_config.AutoRetainerListingConfig.Enabled)
         {
             Enable();
         }
@@ -202,7 +202,7 @@ public partial class AutoRetainerListing
                 return true;
             }
 
-            if (_config.MarketAdjusterConfiguration.SeparateNQAndHQ && IsCurrentItemHQ)
+            if (_config.AutoRetainerListingConfig.SeparateNQAndHQ && IsCurrentItemHQ)
             {
                 var foundHQItem = false;
                 for (var i = 1; i <= 12 && !foundHQItem; i++)
@@ -241,9 +241,9 @@ public partial class AutoRetainerListing
             var ui = &addon->AtkUnitBase;
             var priceComponent = addon->AskingPrice;
 
-            if (CurrentMarketLowestPrice - _config.MarketAdjusterConfiguration.PriceReduction < _config.MarketAdjusterConfiguration.LowestAcceptablePrice)
+            if (CurrentMarketLowestPrice - _config.AutoRetainerListingConfig.PriceReduction < _config.AutoRetainerListingConfig.LowestAcceptablePrice)
             {
-                var message = GetSeString("Item is listed lower than minimum price, skipping", SeString.CreateItemLink(CurrentItemSearchItemID, IsCurrentItemHQ ? ItemPayload.ItemKind.Hq : ItemPayload.ItemKind.Normal), CurrentMarketLowestPrice, CurrentItemPrice, _config.MarketAdjusterConfiguration.LowestAcceptablePrice);
+                var message = GetSeString("Item is listed lower than minimum price, skipping", SeString.CreateItemLink(CurrentItemSearchItemID, IsCurrentItemHQ ? ItemPayload.ItemKind.Hq : ItemPayload.ItemKind.Normal), CurrentMarketLowestPrice, CurrentItemPrice, _config.AutoRetainerListingConfig.LowestAcceptablePrice);
                 Svc.Chat.Print(message);
 
                 Callback.Fire((AtkUnitBase*)addon, true, 1);
@@ -252,13 +252,13 @@ public partial class AutoRetainerListing
                 return true;
             }
 
-            if (_config.MarketAdjusterConfiguration.MaxPriceReduction != 0 &&
-                CurrentItemPrice - CurrentMarketLowestPrice > _config.MarketAdjusterConfiguration.LowestAcceptablePrice)
+            if (_config.AutoRetainerListingConfig.MaxPriceReduction != 0 &&
+                CurrentItemPrice - CurrentMarketLowestPrice > _config.AutoRetainerListingConfig.LowestAcceptablePrice)
             {
                 var message = GetSeString("Item has exceeded maximum acceptable price reduction, skipping",
                     SeString.CreateItemLink(CurrentItemSearchItemID,
                         IsCurrentItemHQ ? ItemPayload.ItemKind.Hq : ItemPayload.ItemKind.Normal),
-                    CurrentMarketLowestPrice, CurrentItemPrice, _config.MarketAdjusterConfiguration.MaxPriceReduction);
+                    CurrentMarketLowestPrice, CurrentItemPrice, _config.AutoRetainerListingConfig.MaxPriceReduction);
                 Svc.Chat.Print(message);
 
                 Callback.Fire((AtkUnitBase*)addon, true, 1);
@@ -267,7 +267,7 @@ public partial class AutoRetainerListing
                 return true;
             }
 
-            priceComponent->SetValue(CurrentMarketLowestPrice - _config.MarketAdjusterConfiguration.PriceReduction);
+            priceComponent->SetValue(CurrentMarketLowestPrice - _config.AutoRetainerListingConfig.PriceReduction);
             Callback.Fire((AtkUnitBase*)addon, true, 0);
             ui->Close(true);
 
