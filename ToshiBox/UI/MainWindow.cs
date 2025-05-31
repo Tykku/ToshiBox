@@ -59,7 +59,7 @@ namespace ToshiBox.UI
         private void DrawFeatureList()
         {
             float columnWidth = ImGui.GetColumnWidth();
-            float checkboxWidth = ImGui.GetFrameHeight(); // Approximate square checkbox
+            float checkboxWidth = ImGui.GetFrameHeight();
             float spacing = ImGui.GetStyle().ItemSpacing.X;
             float selectableWidth = columnWidth - checkboxWidth - spacing;
 

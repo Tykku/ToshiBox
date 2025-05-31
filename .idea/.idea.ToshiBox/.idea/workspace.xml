@@ -5,13 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="780ba450-9a1a-463d-abfd-5ab98b3838e7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ToshiBox/Common/Helpers.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ToshiBox/Features/AutoChestOpen.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ToshiBox/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ToshiBox/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToshiBox/Common/Config.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/Common/Config.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToshiBox/Common/Events.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/Common/Events.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToshiBox/Features/AutoRetainerListing.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/Features/AutoRetainerListing.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToshiBox/ToshiBox.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/ToshiBox.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToshiBox/Features/AutoChestOpen.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/Features/AutoChestOpen.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ToshiBox/UI/MainWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/UI/MainWindow.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -44,6 +39,7 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/831d23e56149cd59c40fc00c7feb7c5334bd19c4/src/libraries/System.Private.CoreLib/src/System/Numerics/Vector2.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/a7201434f979f0228eee0a9314347d31fa6bd5ab6dbbc312fbcfa46c762773f/Events.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/aa30d9cec1ef3dbe4259e4a21b1859446d2a5fc9ba751b06f21623eb46b2edd/ImGuiColors.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c0accbf6eec3352f67bdbb51a1a62a223472bc342b61c9b0beb7ded733f46a/ICommandManager.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ToshiBox/Features/AutoChestOpen.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -59,26 +55,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Auto-Chest&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "chest-fixes",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.keymap",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;rider.external.source.directories&quot;: [
-      &quot;C:\\Users\\Tykku\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache&quot;,
-      &quot;C:\\Users\\Tykku\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache&quot;,
-      &quot;C:\\Users\\Tykku\\AppData\\Local\\Symbols\\src&quot;
+  "keyToStringList": {
+    "rider.external.source.directories": [
+      "C:\\Users\\Tykku\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache",
+      "C:\\Users\\Tykku\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache",
+      "C:\\Users\\Tykku\\AppData\\Local\\Symbols\\src"
     ]
   }
-}</component>
+}]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -101,6 +97,8 @@
       <workItem from="1748346911966" duration="680000" />
       <workItem from="1748655727471" duration="2559000" />
       <workItem from="1748671147510" duration="2087000" />
+      <workItem from="1748680101102" duration="203000" />
+      <workItem from="1748680630848" duration="1924000" />
     </task>
     <servers />
   </component>
