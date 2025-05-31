@@ -11,6 +11,7 @@ using Dalamud.Plugin.Services;
 using ECommons.Automation.NeoTaskManager;
 using ToshiBox.Common;
 using System;
+using ToshiBox.IPC;
 
 namespace ToshiBox.Features
 {
@@ -37,7 +38,7 @@ namespace ToshiBox.Features
 
         public void IsEnabled()
         {
-            if (_config.AutoRetainerListingConfig.Enabled)
+            if (_config.AutoChestOpenConfig.Enabled)
             {
                 Enable();
             }
@@ -49,9 +50,15 @@ namespace ToshiBox.Features
 
         public void Enable()
         {
-            
+            // Disable conflicting feature in PandorasBox
+            if (PandoraIPC.IsFeatureEnabled("Automatically Open Chests") ?? false)
+            {
+                PandoraIPC.DisableFeature("Automatically Open Chests");
+                Svc.Chat.Print("[ToshiBox] Disabled Pandora's Box 'Automatically Open Chests' Feature.");
+            }
             Svc.Framework.Update += RunFeature;
         }
+
 
         public void Disable()
         {
