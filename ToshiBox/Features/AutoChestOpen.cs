@@ -10,6 +10,7 @@ using System.Numerics;
 using Dalamud.Plugin.Services;
 using ECommons.Automation.NeoTaskManager;
 using ToshiBox.Common;
+using System;
 
 namespace ToshiBox.Features
 {
@@ -18,13 +19,15 @@ namespace ToshiBox.Features
         private readonly Config _config;
         private readonly TaskManager taskManager;
 
-        private static DateTime NextOpenTime = DateTime.Now;
-        private static ulong LastChestId = 0;
-        private static readonly Random Rand = new();
-        private static DateTime CloseWindowTime = DateTime.Now;
-
         private ushort? _lastContentFinderId = null;
         private bool _isHighEndDuty = false;
+
+        // New fields to track delay between getting in range and interacting
+        private ulong? _pendingChestId = null;
+        private DateTime _inRangeStartTime = DateTime.MinValue;
+
+        private static DateTime CloseWindowTime = DateTime.Now;
+        private static readonly Random Rand = new();
 
         public AutoChestOpen(Events events, Config config)
         {
@@ -46,6 +49,7 @@ namespace ToshiBox.Features
 
         public void Enable()
         {
+            
             Svc.Framework.Update += RunFeature;
         }
 
@@ -86,8 +90,8 @@ namespace ToshiBox.Features
             var treasure = Svc.Objects.FirstOrDefault(o =>
             {
                 if (o == null) return false;
-
-                var requiredDistance = player.HitboxRadius + o.HitboxRadius + _config.AutoChestOpenConfig.Distance;
+                
+                var requiredDistance = _config.AutoChestOpenConfig.Distance;
                 if (Vector3.DistanceSquared(player.Position, o.Position) > requiredDistance * requiredDistance)
                     return false;
 
@@ -102,18 +106,31 @@ namespace ToshiBox.Features
                 return true;
             });
 
-            if (treasure == null) return;
-            if (DateTime.Now < NextOpenTime) return;
-            if (treasure.GameObjectId == LastChestId && DateTime.Now - NextOpenTime < TimeSpan.FromSeconds(10)) return;
 
-            NextOpenTime = DateTime.Now.AddSeconds(_config.AutoChestOpenConfig.Delay + Rand.NextDouble());
-            LastChestId = treasure.GameObjectId;
+            if (treasure == null)
+            {
+                _pendingChestId = null;
+                _inRangeStartTime = DateTime.MinValue;
+                return;
+            }
+
+            if (_pendingChestId != treasure.GameObjectId)
+            {
+                _pendingChestId = treasure.GameObjectId;
+                _inRangeStartTime = DateTime.Now;
+                return;
+            }
+
+            var delay = TimeSpan.FromSeconds(_config.AutoChestOpenConfig.Delay);
+            if (DateTime.Now - _inRangeStartTime < delay)
+                return;
+
+            _pendingChestId = null;
 
             try
             {
                 Svc.Targets.Target = treasure;
-                TargetSystem.Instance()->InteractWithObject(
-                    (FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject*)(void*)treasure.Address);
+                TargetSystem.Instance()->InteractWithObject((FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject*)(void*)treasure.Address);
 
                 if (_config.AutoChestOpenConfig.CloseLootWindow)
                 {
