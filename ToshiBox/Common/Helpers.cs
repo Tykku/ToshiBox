@@ -1,9 +1,30 @@
 using System.Diagnostics.CodeAnalysis;
+using Dalamud.Game.Text.SeStringHandling;
+using ECommons.DalamudServices;
 
 namespace ToshiBox.Common;
 
-public static class ArrayExtensions
+public static class Helpers
 {
+    /// <summary>
+    /// Prints a message to chat with a colored "[ToshiBox]" prefix and optional colored message text.
+    /// </summary>
+    /// <param name="message">The message text to print.</param>
+    /// <param name="messageColor">Optional color for the message text. If null, default color is used.</param>
+    public static void PrintToshi(string message, byte? messageColor = null)
+    {
+        var ssb = new SeStringBuilder();
+        ssb.AddUiForeground("[ToshiBox]", 34); // colored prefix
+        ssb.AddText(" ");                       // space separator
+
+        if (messageColor.HasValue)
+            ssb.AddUiForeground(message, messageColor.Value);
+        else
+            ssb.AddText(message);
+
+        Svc.Chat.Print(ssb.Build());
+    }
+    
     /// <summary> Iterate over enumerables with additional index. </summary>
     public static IEnumerable<(T Value, int Index)> WithIndex<T>(this IEnumerable<T> list)
         => list.Select((x, i) => (x, i));

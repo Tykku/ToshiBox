@@ -54,7 +54,7 @@ namespace ToshiBox.Features
             if (PandoraIPC.IsFeatureEnabled("Automatically Open Chests") ?? false)
             {
                 PandoraIPC.DisableFeature("Automatically Open Chests");
-                Svc.Chat.Print("[ToshiBox] Disabled Pandora's Box 'Automatically Open Chests' Feature.");
+                Helpers.PrintToshi("Disabled Pandora's Box 'Automatically Open Chests' Feature.", 12);
             }
             Svc.Framework.Update += RunFeature;
         }
