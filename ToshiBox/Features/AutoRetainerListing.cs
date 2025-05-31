@@ -285,9 +285,19 @@ public partial class AutoRetainerListing
         var format = resourceData.TryGetValue(key, out var resValue) ? resValue : fbResourceData.GetValueOrDefault(key);
         var ssb = new SeStringBuilder();
         var lastIndex = 0;
-        if (format == null) format = "Item not found on market, hold left shift to manually post";
+
+        if (format == null)
+        {
+            // Expecting at least one SeString argument
+            var itemLink = args.FirstOrDefault(a => a is SeString) as SeString;
+            if (itemLink == null) itemLink = new SeStringBuilder().AddText("Unknown Item").Build();
+
+            format = "{0} not found on market, hold left shift to manually post";
+            args = new object[] { itemLink }; // Use only the item link
+        }
 
         ssb.AddUiForeground($"[{nameof(ToshiBox)}]", 34);
+
         foreach (var match in SeStringRegex().Matches(format).Cast<Match>())
         {
             ssb.AddUiForeground(format[lastIndex..match.Index], 2);
@@ -295,13 +305,13 @@ public partial class AutoRetainerListing
 
             if (int.TryParse(match.Groups[1].Value, out var argIndex) && argIndex >= 0 && argIndex < args.Length)
             {
-                if (args[argIndex] is SeString @seString)
+                if (args[argIndex] is SeString seString)
                 {
-                    ssb.Append(@seString);
+                    ssb.Append(seString);
                 }
                 else
                 {
-                    ssb.AddUiForeground(args[argIndex].ToString() ?? string.Empty, 2);
+                    ssb.AddUiForeground(args[argIndex]?.ToString() ?? string.Empty, 2);
                 }
             }
         }
@@ -309,6 +319,7 @@ public partial class AutoRetainerListing
         ssb.AddUiForeground(format[lastIndex..], 2);
         return ssb.Build();
     }
+
 
     [GeneratedRegex("\\{(\\d+)\\}")]
     private static partial Regex SeStringRegex();
