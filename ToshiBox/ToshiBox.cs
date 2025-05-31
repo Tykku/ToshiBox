@@ -6,6 +6,7 @@ using ECommons.Configuration;
 using ECommons.DalamudServices;
 using ToshiBox.Common;
 using ToshiBox.Features;
+using ToshiBox.IPC;
 using ToshiBox.UI;
 
 namespace ToshiBox
@@ -39,6 +40,8 @@ namespace ToshiBox
             
             AutoChestOpenInstance = new AutoChestOpen(EventInstance, ConfigInstance);
             AutoChestOpenInstance.IsEnabled();
+            
+            PandoraIPC.Init();
 
             _mainWindow = new MainWindow(AutoRetainerListingInstance, AutoChestOpenInstance, ConfigInstance);
             _windowSystem.AddWindow(_mainWindow);
@@ -68,7 +71,7 @@ namespace ToshiBox
         public void Dispose()
         {
             AutoRetainerListingInstance.Disable();
-
+            PandoraIPC.Dispose();
             _pluginInterface.UiBuilder.Draw -= _windowSystem.Draw;
             _pluginInterface.UiBuilder.OpenConfigUi -= () => _mainWindow.IsOpen = true;
             _pluginInterface.UiBuilder.OpenMainUi -= () => _mainWindow.IsOpen = true;
