@@ -18,6 +18,7 @@ namespace ToshiBox
         public Events EventInstance;
         public Config ConfigInstance;
         public AutoRetainerListing AutoRetainerListingInstance;
+        public AutoChestOpen AutoChestOpenInstance;
 
         private readonly IDalamudPluginInterface _pluginInterface;
 
@@ -32,11 +33,14 @@ namespace ToshiBox
 
             EventInstance = new Events();
             ConfigInstance = EzConfig.Init<Config>();
+            
             AutoRetainerListingInstance = new AutoRetainerListing(EventInstance, ConfigInstance);
-
             AutoRetainerListingInstance.IsEnabled();
+            
+            AutoChestOpenInstance = new AutoChestOpen(EventInstance, ConfigInstance);
+            AutoChestOpenInstance.IsEnabled();
 
-            _mainWindow = new MainWindow(AutoRetainerListingInstance, ConfigInstance);
+            _mainWindow = new MainWindow(AutoRetainerListingInstance, AutoChestOpenInstance, ConfigInstance);
             _windowSystem.AddWindow(_mainWindow);
 
             _pluginInterface.UiBuilder.Draw += _windowSystem.Draw;
@@ -49,27 +53,17 @@ namespace ToshiBox
         {
             if (string.Equals(args, "toggleshangriladida009"))
             {
-                ConfigInstance.MarketAdjusterConfiguration.Enabled = !ConfigInstance.MarketAdjusterConfiguration.Enabled;
+                ConfigInstance.AutoRetainerListingConfig.Enabled = !ConfigInstance.AutoRetainerListingConfig.Enabled;
                 AutoRetainerListingInstance.IsEnabled();
                 EzConfig.Save();
 
-                Svc.Chat.Print($"If you know you know has been {(ConfigInstance.MarketAdjusterConfiguration.Enabled ? "enabled" : "disabled")}");
+                Svc.Chat.Print($"If you know you know has been {(ConfigInstance.AutoRetainerListingConfig.Enabled ? "enabled" : "disabled")}");
             }
             else
             {
                 _mainWindow.IsOpen = !_mainWindow.IsOpen;
             }
         }
-
-        /*[Cmd("/toshibox toggleshangriladida009", "Toggles something...", false)]
-        public void ToggleAutoRetainerCheat(string command, string args)
-        {
-            ConfigInstance.MarketAdjusterConfiguration.Enabled = !ConfigInstance.MarketAdjusterConfiguration.Enabled;
-            AutoRetainerListingInstance.IsEnabled();
-            EzConfig.Save();
-
-            Svc.Chat.Print($"If you know you know {(ConfigInstance.MarketAdjusterConfiguration.Enabled ? "enabled" : "disabled")}");
-        }*/
 
         public void Dispose()
         {

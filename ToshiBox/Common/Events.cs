@@ -18,7 +18,6 @@ public class Events
     public event Action? EnteredPvPInstance;
     public void OnEnteredPvPInstance() => EnteredPvPInstance?.Invoke();
     public event Action<DateTime, uint, uint, ushort, uint, Memory<byte>>? ServerIPCReceived;
-    public void OnServerIPCReceived(DateTime sendTimestamp, uint sourceServerActor, uint targetServerActor, ushort opcode, uint epoch, Span<byte> payload)
-        => ServerIPCReceived?.Invoke(sendTimestamp, sourceServerActor, targetServerActor, opcode, epoch, payload.ToArray().AsMemory());
+    public void OnServerIPCReceived(DateTime sendTimestamp, uint sourceServerActor, uint targetServerActor, ushort opcode, uint epoch, Span<byte> payload) => ServerIPCReceived?.Invoke(sendTimestamp, sourceServerActor, targetServerActor, opcode, epoch, payload.ToArray().AsMemory());
     public delegate void ServerIPCReceivedDelegate();*/
 }
