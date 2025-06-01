@@ -9,6 +9,7 @@ using ECommons;
 using ECommons.Automation;
 using ECommons.Automation.NeoTaskManager;
 using ECommons.DalamudServices;
+using ECommons.Logging;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -260,96 +261,110 @@ public partial class AutoRetainerListing
     }
 
     private unsafe bool? FillLowestPrice()
-    {
-        if (GenericHelpers.TryGetAddonByName<AddonRetainerSell>("RetainerSell", out var addon) && GenericHelpers.IsAddonReady(&addon->AtkUnitBase))
         {
-            var ui = &addon->AtkUnitBase;
-            var priceComponent = addon->AskingPrice;
-
-            if (CurrentMarketLowestPrice - _config.AutoRetainerListingConfig.PriceReduction < _config.AutoRetainerListingConfig.LowestAcceptablePrice)
+            if (GenericHelpers.TryGetAddonByName<AddonRetainerSell>("RetainerSell", out var addon) && GenericHelpers.IsAddonReady(&addon->AtkUnitBase))
             {
-                var message = GetSeString("Item is listed lower than minimum price, skipping", SeString.CreateItemLink(CurrentItemSearchItemID, IsCurrentItemHQ ? ItemPayload.ItemKind.Hq : ItemPayload.ItemKind.Normal), CurrentMarketLowestPrice, CurrentItemPrice, _config.AutoRetainerListingConfig.LowestAcceptablePrice);
-                Svc.Chat.Print(message);
+                var ui = &addon->AtkUnitBase;
+                var priceComponent = addon->AskingPrice;
 
-                Callback.Fire((AtkUnitBase*)addon, true, 1);
+                if (CurrentMarketLowestPrice - _config.AutoRetainerListingConfig.PriceReduction < _config.AutoRetainerListingConfig.LowestAcceptablePrice)
+                {
+                    SeString message;
+
+                    if (CurrentMarketLowestPrice != 0)
+                    {
+                        message = GetSeString("ItemIsListedLower",
+                            SeString.CreateItemLink(CurrentItemSearchItemID,
+                                IsCurrentItemHQ ? ItemPayload.ItemKind.Hq : ItemPayload.ItemKind.Normal),
+                            CurrentMarketLowestPrice, CurrentItemPrice,
+                            _config.AutoRetainerListingConfig.LowestAcceptablePrice);
+                    }
+                    else // CurrentMarketLowestPrice == 0
+                    {
+                        message = GetSeString("MissingItem", SeString.CreateItemLink(CurrentItemSearchItemID));
+
+                    }
+
+                    Svc.Chat.Print(message);
+                    PluginLog.Debug(message.TextValue);
+                    Callback.Fire((AtkUnitBase*)addon, true, 1);
+                    ui->Close(true);
+                    return true;
+                }
+
+
+                if (_config.AutoRetainerListingConfig.MaxPriceReduction != 0 &&
+                    CurrentItemPrice - CurrentMarketLowestPrice > _config.AutoRetainerListingConfig.MaxPriceReduction)
+                {
+                    var message = GetSeString("ItemExceededMaxPriceReduction",
+                        SeString.CreateItemLink(CurrentItemSearchItemID, IsCurrentItemHQ ? ItemPayload.ItemKind.Hq : ItemPayload.ItemKind.Normal),
+                        CurrentMarketLowestPrice, CurrentItemPrice, _config.AutoRetainerListingConfig.MaxPriceReduction);
+
+                    Svc.Chat.Print(message);
+                    Callback.Fire((AtkUnitBase*)addon, true, 1);
+                    ui->Close(true);
+                    return true;
+                }
+
+                priceComponent->SetValue(CurrentMarketLowestPrice - _config.AutoRetainerListingConfig.PriceReduction);
+                Callback.Fire((AtkUnitBase*)addon, true, 0);
                 ui->Close(true);
-
                 return true;
             }
+            return false;
+        }
 
-            if (_config.AutoRetainerListingConfig.MaxPriceReduction != 0 &&
-                CurrentItemPrice - CurrentMarketLowestPrice > _config.AutoRetainerListingConfig.LowestAcceptablePrice)
+        private static readonly Dictionary<string, string> resourceData = new()
+        {
+            { "ItemIsListedLower", "{0} is listed lower than minimum price, skipping it (Market: {1}, Minimum in settings: {3})" },
+            { "ItemExceededMaxPriceReduction", "Item has exceeded maximum acceptable price reduction, skipping {0} (Lowest: {1}, Current: {2}, Max Reduction: {3})" },
+            { "MissingItem", "{0} not found on market, hold left shift to manually post" },
+        };
+
+        private static readonly Dictionary<string, string> fbResourceData = new();
+
+        public SeString GetSeString(string key, params object[] args)
+        {
+            var format = resourceData.TryGetValue(key, out var resValue) ? resValue : fbResourceData.GetValueOrDefault(key);
+
+            if (format == null)
             {
-                var message = GetSeString("Item has exceeded maximum acceptable price reduction, skipping",
-                    SeString.CreateItemLink(CurrentItemSearchItemID,
-                        IsCurrentItemHQ ? ItemPayload.ItemKind.Hq : ItemPayload.ItemKind.Normal),
-                    CurrentMarketLowestPrice, CurrentItemPrice, _config.AutoRetainerListingConfig.MaxPriceReduction);
-                Svc.Chat.Print(message);
-
-                Callback.Fire((AtkUnitBase*)addon, true, 1);
-                ui->Close(true);
-
-                return true;
+                var itemLink = args.FirstOrDefault(a => a is SeString) as SeString ?? new SeStringBuilder().AddText("Unknown Item").Build();
+                format = "{0} not found on market, hold left shift to manually post";
+                args = new object[] { itemLink };
             }
 
-            priceComponent->SetValue(CurrentMarketLowestPrice - _config.AutoRetainerListingConfig.PriceReduction);
-            Callback.Fire((AtkUnitBase*)addon, true, 0);
-            ui->Close(true);
+            var ssb = new SeStringBuilder();
+            int lastIndex = 0;
 
-            return true;
-        }
+            ssb.AddUiForeground($"[{nameof(ToshiBox)}]", 48);
 
-        return false;
-    }
-
-    private readonly Dictionary<string, string> resourceData = new Dictionary<string, string>();
-    private readonly Dictionary<string, string> fbResourceData =new Dictionary<string, string>();
-
-    public SeString GetSeString(string key, params object[] args)
-    {
-        var format = resourceData.TryGetValue(key, out var resValue) ? resValue : fbResourceData.GetValueOrDefault(key);
-        var ssb = new SeStringBuilder();
-        var lastIndex = 0;
-
-        if (format == null)
-        {
-            // Expecting at least one SeString argument
-            var itemLink = args.FirstOrDefault(a => a is SeString) as SeString;
-            if (itemLink == null) itemLink = new SeStringBuilder().AddText("Unknown Item").Build();
-
-            format = "{0} not found on market, hold left shift to manually post";
-            args = new object[] { itemLink }; // Use only the item link
-        }
-
-        ssb.AddUiForeground($"[{nameof(ToshiBox)}]", 48);
-
-        foreach (var match in SeStringRegex().Matches(format).Cast<Match>())
-        {
-            ssb.AddUiForeground(format[lastIndex..match.Index], 2);
-            lastIndex = match.Index + match.Length;
-
-            if (int.TryParse(match.Groups[1].Value, out var argIndex) && argIndex >= 0 && argIndex < args.Length)
+            foreach (Match match in SeStringRegex().Matches(format))
             {
-                if (args[argIndex] is SeString seString)
+                ssb.AddUiForeground(format[lastIndex..match.Index], 2);
+                lastIndex = match.Index + match.Length;
+
+                if (int.TryParse(match.Groups[1].Value, out var argIndex) && argIndex >= 0 && argIndex < args.Length)
                 {
-                    ssb.Append(seString);
-                }
-                else
-                {
-                    ssb.AddUiForeground(args[argIndex]?.ToString() ?? string.Empty, 2);
+                    if (args[argIndex] is SeString seString)
+                    {
+                        ssb.Append(seString);
+                    }
+                    else
+                    {
+                        ssb.AddUiForeground(args[argIndex]?.ToString() ?? string.Empty, 2);
+                    }
                 }
             }
+
+            ssb.AddUiForeground(format[lastIndex..], 2);
+
+            return ssb.Build();
         }
 
-        ssb.AddUiForeground(format[lastIndex..], 2);
-        return ssb.Build();
+        [GeneratedRegex("\\{(\\d+)\\}")]
+        private static partial Regex SeStringRegex();
+
+        [GeneratedRegex("[^0-9]")]
+        private static partial Regex AutoRetainerPriceAdjustRegex();
     }
-
-
-    [GeneratedRegex("\\{(\\d+)\\}")]
-    private static partial Regex SeStringRegex();
-
-    [GeneratedRegex("[^0-9]")]
-    private static partial Regex AutoRetainerPriceAdjustRegex();
-}
-    
