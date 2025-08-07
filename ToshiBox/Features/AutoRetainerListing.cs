@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Game.Addon.Lifecycle;

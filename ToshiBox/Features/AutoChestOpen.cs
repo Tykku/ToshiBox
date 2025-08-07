@@ -11,6 +11,7 @@ using Dalamud.Plugin.Services;
 using ECommons.Automation.NeoTaskManager;
 using ToshiBox.Common;
 using System;
+using System.Linq;
 using ToshiBox.IPC;
 
 namespace ToshiBox.Features

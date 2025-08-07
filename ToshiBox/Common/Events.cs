@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Dalamud.Game.Network.Structures;
 
 namespace ToshiBox.Common;
