@@ -1,12 +1,13 @@
 using System.Text.RegularExpressions;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Game.Network.Structures;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Memory;
+using Dalamud.Utility;
 using ECommons;
-using ECommons.Automation;
 using ECommons.Automation.NeoTaskManager;
 using ECommons.DalamudServices;
 using ECommons.Logging;
@@ -14,8 +15,8 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using ImGuiNET;
 using ToshiBox.Common;
+using Callback = ECommons.Automation.Callback;
 
 namespace ToshiBox.Features;
 
@@ -275,7 +276,7 @@ public partial class AutoRetainerListing
                     {
                         message = GetSeString("ItemIsListedLower",
                             SeString.CreateItemLink(CurrentItemSearchItemID,
-                                IsCurrentItemHQ ? ItemPayload.ItemKind.Hq : ItemPayload.ItemKind.Normal),
+                                IsCurrentItemHQ ? ItemKind.Hq : ItemKind.Normal),
                             CurrentMarketLowestPrice, CurrentItemPrice,
                             _config.AutoRetainerListingConfig.LowestAcceptablePrice);
                     }
@@ -297,7 +298,7 @@ public partial class AutoRetainerListing
                     CurrentItemPrice - CurrentMarketLowestPrice > _config.AutoRetainerListingConfig.MaxPriceReduction)
                 {
                     var message = GetSeString("ItemExceededMaxPriceReduction",
-                        SeString.CreateItemLink(CurrentItemSearchItemID, IsCurrentItemHQ ? ItemPayload.ItemKind.Hq : ItemPayload.ItemKind.Normal),
+                        SeString.CreateItemLink(CurrentItemSearchItemID, IsCurrentItemHQ ? ItemKind.Hq : ItemKind.Normal),
                         CurrentMarketLowestPrice, CurrentItemPrice, _config.AutoRetainerListingConfig.MaxPriceReduction);
 
                     Svc.Chat.Print(message);
