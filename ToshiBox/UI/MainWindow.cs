@@ -2,7 +2,9 @@ using System;
 using Dalamud.Interface.Colors;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Windowing;
+using Dalamud.Logging;
 using ECommons.Configuration;
+using ECommons.Logging;
 using ToshiBox.Common;
 using ToshiBox.Features;
 
@@ -29,34 +31,40 @@ namespace ToshiBox.UI
             _autoRetainerListing = autoRetainerListing;
             _autoChestOpen = autoChestOpen;
             _config = config;
-            // Flags |= ImGuiWindowFlags.NoScrollbar;
         }
 
         #region Draw Method
 
         public override void Draw()
         {
-            // ImGui.BeginChild("ToshiBox_MainChild", new System.Numerics.Vector2(250, 250), false);
-            // ImGui.Columns(2, "MainChild", true);
-            // ImGui.SetColumnWidth(0, 250);
-            //
-            // // Header row
-            // ImGui.TextColored(ImGuiColors.DalamudWhite, "Features");
-            // ImGui.NextColumn();
-            // ImGui.TextColored(ImGuiColors.DalamudWhite, "Settings");
-            // ImGui.NextColumn();
-            //
-            // ImGui.Separator();
-            // ImGui.NextColumn();
-            // ImGui.NextColumn();
-            //
-            // DrawFeatureList();
-            // ImGui.NextColumn();
-            // DrawSettingsPanel();
-            //
-            // ImGui.Columns(1);
-            // ImGui.EndChild();
+            // Set the overall container to a fixed size big enough for both panels
+            ImGui.BeginChild("ToshiBox_MainChild", new System.Numerics.Vector2(600, 300), false);
+
+            // Left panel fixed width
+            float leftWidth = 250f;
+
+            ImGui.BeginChild("LeftPanel", new System.Numerics.Vector2(leftWidth, 0), true);
+            ImGui.TextColored(ImGuiColors.DalamudWhite, "Features");
+            ImGui.Separator();
+            DrawFeatureList();
+            ImGui.EndChild();
+
+            ImGui.SameLine();
+
+            // Right panel fills the rest of the available width manually calculated
+            var availWidth = 600 - leftWidth - ImGui.GetStyle().ItemSpacing.X; // total width - left panel - spacing
+            if (availWidth < 0) availWidth = 300; // fallback
+
+            ImGui.BeginChild("RightPanel", new System.Numerics.Vector2(availWidth, 0), true);
+            ImGui.TextColored(ImGuiColors.DalamudWhite, "Settings");
+            ImGui.Separator();
+            DrawSettingsPanel();
+            ImGui.EndChild();
+
+            ImGui.EndChild();
         }
+
+
 
         #endregion
 
@@ -70,53 +78,50 @@ namespace ToshiBox.UI
             float selectableWidth = columnWidth - checkboxWidth - spacing;
             var darkerBg = new System.Numerics.Vector4(0.15f, 0.15f, 0.15f, 1.0f);
 
-            void DrawFeature(string label, string checkboxId, ref bool enabled, SelectedFeature feature,
-                Action onToggle)
+            void DrawFeature(string label, string checkboxId, ref bool enabled, SelectedFeature feature, Action onToggle)
             {
                 ImGui.PushStyleColor(ImGuiCol.ChildBg, darkerBg);
                 ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new System.Numerics.Vector2(4, 4));
-                ImGui.BeginChild(label + "_Group", new System.Numerics.Vector2(columnWidth, 40), true,
-                    ImGuiWindowFlags.None);
+                ImGui.BeginChild(label + "_Group", new System.Numerics.Vector2(columnWidth, 40), true, ImGuiWindowFlags.None);
+
+                ImGui.Checkbox(checkboxId, ref enabled);
+                if (ImGui.IsItemDeactivatedAfterEdit())
                 {
-                    ImGui.Checkbox(checkboxId, ref enabled);
-                    if (ImGui.IsItemDeactivatedAfterEdit())
-                    {
-                        onToggle();
-                        EzConfig.Save();
-                    }
-
-                    ImGui.SameLine();
-
-                    bool selected = _selectedFeature == feature;
-                    if (ImGui.Selectable(label, selected, ImGuiSelectableFlags.None, new(selectableWidth, 0)))
-                    {
-                        _selectedFeature = feature;
-                    }
+                    onToggle();
+                    EzConfig.Save();
                 }
+
+                ImGui.SameLine();
+
+                bool selected = _selectedFeature == feature;
+                if (ImGui.Selectable(label, selected, ImGuiSelectableFlags.None, new System.Numerics.Vector2(selectableWidth, 0)))
+                {
+                    _selectedFeature = feature;
+                    PluginLog.Debug($"Selected feature changed to: {_selectedFeature}");
+                }
+
                 ImGui.EndChild();
                 ImGui.PopStyleVar();
                 ImGui.PopStyleColor();
                 ImGui.Spacing();
             }
 
-            // For AutoRetainerListing, hide entire feature when disabled
+            // Always draw both features regardless of enabled state
             {
                 bool enabled = _config.AutoRetainerListingConfig.Enabled;
-                if (enabled) // only draw if enabled
-                {
-                    DrawFeature("Auto Retainer Listing", "##AutoRetainerEnabled", ref enabled,
-                        SelectedFeature.AutoRetainerListing, () =>
-                        {
-                            _config.AutoRetainerListingConfig.Enabled = enabled;
-                            _autoRetainerListing.IsEnabled();
-                        });
-                }
+                DrawFeature("Auto Retainer Listing", "##AutoRetainerEnabled", ref enabled,
+                    SelectedFeature.AutoRetainerListing,
+                    () =>
+                    {
+                        _config.AutoRetainerListingConfig.Enabled = enabled;
+                        _autoRetainerListing.IsEnabled();
+                    });
             }
 
-            // For other features, always draw with frame regardless of enabled state
             {
                 bool enabled = _config.AutoChestOpenConfig.Enabled;
-                DrawFeature("Auto Chest Open", "##AutoChestOpenEnabled", ref enabled, SelectedFeature.AutoChestOpen,
+                DrawFeature("Auto Chest Open", "##AutoChestOpenEnabled", ref enabled,
+                    SelectedFeature.AutoChestOpen,
                     () =>
                     {
                         _config.AutoChestOpenConfig.Enabled = enabled;
@@ -131,6 +136,8 @@ namespace ToshiBox.UI
 
         private void DrawSettingsPanel()
         {
+            ImGui.Text($"Selected feature: {_selectedFeature}"); // Debug UI text
+
             switch (_selectedFeature)
             {
                 case SelectedFeature.AutoRetainerListing:
@@ -147,7 +154,7 @@ namespace ToshiBox.UI
 
         #endregion
 
-        #region AutoRetainerListing
+        #region AutoRetainerListing Settings
 
         private void DrawAutoRetainerListingSettings()
         {
@@ -192,11 +199,13 @@ namespace ToshiBox.UI
 
         #endregion
 
-        #region AutoChestOpen
+        #region AutoChestOpen Settings
 
         private void DrawAutoChestOpenSettings()
         {
-            if (!_config.AutoChestOpenConfig.Enabled)
+            // Temporarily force enabled = true for testing so settings show:
+            bool enabled = true; // _config.AutoChestOpenConfig.Enabled;
+            if (!enabled)
             {
                 ImGui.TextColored(ImGuiColors.DalamudGrey, "Enable the feature to adjust settings.");
                 return;
@@ -204,7 +213,6 @@ namespace ToshiBox.UI
 
             ImGui.PushItemWidth(250f);
 
-            //Distance to open chest
             float distance = _config.AutoChestOpenConfig.Distance;
             if (ImGui.SliderFloat("Distance (yalms)", ref distance, 0f, 3f, "%.1f"))
             {
@@ -213,7 +221,6 @@ namespace ToshiBox.UI
                 EzConfig.Save();
             }
 
-            //Delay to open chest
             float delay = _config.AutoChestOpenConfig.Delay;
             if (ImGui.SliderFloat("Delay (seconds)", ref delay, 0f, 2f, "%.1f"))
             {
@@ -222,7 +229,6 @@ namespace ToshiBox.UI
                 EzConfig.Save();
             }
 
-            // Checkbox for High End Duty option
             bool openInHighEnd = _config.AutoChestOpenConfig.OpenInHighEndDuty;
             if (ImGui.Checkbox("Open Chests in High End Duties", ref openInHighEnd))
             {
@@ -230,7 +236,6 @@ namespace ToshiBox.UI
                 EzConfig.Save();
             }
 
-            // Checkbox for closing loot window
             bool closeLootWindow = _config.AutoChestOpenConfig.CloseLootWindow;
             if (ImGui.Checkbox("Close Loot Window After Opening", ref closeLootWindow))
             {
