@@ -38,7 +38,7 @@ namespace ToshiBox.UI
         public override void Draw()
         {
             // Set the overall container to a fixed size big enough for both panels
-            ImGui.BeginChild("ToshiBox_MainChild", new System.Numerics.Vector2(600, 300), false);
+            ImGui.BeginChild("ToshiBox_MainChild", new System.Numerics.Vector2(900, 300), false);
 
             // Left panel fixed width
             float leftWidth = 250f;
@@ -52,7 +52,7 @@ namespace ToshiBox.UI
             ImGui.SameLine();
 
             // Right panel fills the rest of the available width manually calculated
-            var availWidth = 600 - leftWidth - ImGui.GetStyle().ItemSpacing.X; // total width - left panel - spacing
+            var availWidth = 900 - leftWidth - ImGui.GetStyle().ItemSpacing.X; // total width - left panel - spacing
             if (availWidth < 0) availWidth = 300; // fallback
 
             ImGui.BeginChild("RightPanel", new System.Numerics.Vector2(availWidth, 0), true);
