@@ -52,7 +52,6 @@ public partial class AutoRetainerListing
         else
         {
             Disable();
-            Helpers.PrintGlowshi("If you know you know is disabled",14);
         }
     }
     
