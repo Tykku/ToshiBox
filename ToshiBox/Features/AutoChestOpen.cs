@@ -11,6 +11,7 @@ using Dalamud.Plugin.Services;
 using ECommons.Automation.NeoTaskManager;
 using ToshiBox.Common;
 using System;
+using System.Linq;
 using ToshiBox.IPC;
 
 namespace ToshiBox.Features
@@ -157,10 +158,10 @@ namespace ToshiBox.Features
             var addonPtr = Svc.GameGui.GetAddonByName("NeedGreed", 1);
             if (addonPtr != IntPtr.Zero)
             {
-                var needGreedWindow = (AtkUnitBase*)addonPtr;
-                if (needGreedWindow != null && needGreedWindow->IsVisible)
+                var needGreedWindow = addonPtr;
+                if (needGreedWindow != null && needGreedWindow.IsVisible)
                 {
-                    needGreedWindow->Close(true);
+                    ((AtkUnitBase*)needGreedWindow.Address)->Close(true);
                 }
             }
         }
