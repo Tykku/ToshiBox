@@ -1,12 +1,14 @@
 using System;
-using Dalamud.Interface.Colors;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Colors;
 using Dalamud.Interface.Windowing;
-using Dalamud.Logging;
+using ECommons;
 using ECommons.Configuration;
 using ECommons.Logging;
 using ToshiBox.Common;
 using ToshiBox.Features;
+
+// for SetMinSize
 
 namespace ToshiBox.UI
 {
@@ -31,14 +33,20 @@ namespace ToshiBox.UI
             _autoRetainerListing = autoRetainerListing;
             _autoChestOpen = autoChestOpen;
             _config = config;
+
+            this.SetMinSize(new System.Numerics.Vector2(580, 250));
         }
 
         #region Draw Method
 
         public override void Draw()
         {
-            // Set the overall container to a fixed size big enough for both panels
-            ImGui.BeginChild("ToshiBox_MainChild", new System.Numerics.Vector2(900, 300), false);
+            // If Auto Retainer Listing is disabled while selected, clear selection
+            if (_selectedFeature == SelectedFeature.AutoRetainerListing && !_config.AutoRetainerListingConfig.Enabled)
+                _selectedFeature = SelectedFeature.None;
+
+            // Make the main child dynamically take the available width
+            ImGui.BeginChild("ToshiBox_MainChild", new System.Numerics.Vector2(0, 0), false);
 
             // Left panel fixed width
             float leftWidth = 250f;
@@ -51,11 +59,8 @@ namespace ToshiBox.UI
 
             ImGui.SameLine();
 
-            // Right panel fills the rest of the available width manually calculated
-            var availWidth = 900 - leftWidth - ImGui.GetStyle().ItemSpacing.X; // total width - left panel - spacing
-            if (availWidth < 0) availWidth = 300; // fallback
-
-            ImGui.BeginChild("RightPanel", new System.Numerics.Vector2(availWidth, 0), true);
+            // Right panel fills the remaining width automatically
+            ImGui.BeginChild("RightPanel", new System.Numerics.Vector2(0, 0), true);
             ImGui.TextColored(ImGuiColors.DalamudWhite, "Settings");
             ImGui.Separator();
             DrawSettingsPanel();
@@ -63,8 +68,6 @@ namespace ToshiBox.UI
 
             ImGui.EndChild();
         }
-
-
 
         #endregion
 
@@ -106,18 +109,30 @@ namespace ToshiBox.UI
                 ImGui.Spacing();
             }
 
-            // Always draw both features regardless of enabled state
+            // Auto Retainer Listing: only draw when enabled; hide when unchecked
             {
                 bool enabled = _config.AutoRetainerListingConfig.Enabled;
-                DrawFeature("Auto Retainer Listing", "##AutoRetainerEnabled", ref enabled,
-                    SelectedFeature.AutoRetainerListing,
-                    () =>
-                    {
-                        _config.AutoRetainerListingConfig.Enabled = enabled;
-                        _autoRetainerListing.IsEnabled();
-                    });
+                if (enabled)
+                {
+                    DrawFeature("Auto Retainer Listing", "##AutoRetainerEnabled", ref enabled,
+                        SelectedFeature.AutoRetainerListing,
+                        () =>
+                        {
+                            _config.AutoRetainerListingConfig.Enabled = enabled;
+                            _autoRetainerListing.IsEnabled();
+                            if (!enabled && _selectedFeature == SelectedFeature.AutoRetainerListing)
+                                _selectedFeature = SelectedFeature.None;
+                        });
+                }
+                else
+                {
+                    // Ensure selection is cleared if it was selected while hidden
+                    if (_selectedFeature == SelectedFeature.AutoRetainerListing)
+                        _selectedFeature = SelectedFeature.None;
+                }
             }
 
+            // Auto Chest Open: unchanged (still visible even if unchecked)
             {
                 bool enabled = _config.AutoChestOpenConfig.Enabled;
                 DrawFeature("Auto Chest Open", "##AutoChestOpenEnabled", ref enabled,
@@ -136,7 +151,7 @@ namespace ToshiBox.UI
 
         private void DrawSettingsPanel()
         {
-            ImGui.Text($"Selected feature: {_selectedFeature}"); // Debug UI text
+            ImGui.Text($"Selected feature: {_selectedFeature}");
 
             switch (_selectedFeature)
             {
