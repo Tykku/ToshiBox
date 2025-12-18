@@ -2,7 +2,7 @@
   "Author": "Toshi",
   "Name": "ToshiBox",
   "InternalName": "ToshiBox",
-  "DalamudApiLevel": 13,
+  "DalamudApiLevel": 14,
   "Punchline": "Hello there",
   "Description": "My own playground for plugin dev",
   "RepoUrl": "https://github.com/Tykku/ToshiBox",
