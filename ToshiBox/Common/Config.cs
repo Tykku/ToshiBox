@@ -2,7 +2,7 @@ using ECommons.Configuration;
 
 namespace ToshiBox.Common
 {
-    public class Config : IEzConfig
+    public class Config
     {
         public AutoRetainerListingConfig AutoRetainerListingConfig = new();
         public AutoChestOpenConfig AutoChestOpenConfig = new();
