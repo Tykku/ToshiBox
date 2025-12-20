@@ -6,7 +6,7 @@
         "Description": "My own playground for plugin dev",
         "Changelog": "https://github.com/Tykku/ToshiBox/releases",
         "InternalName": "ToshiBox",
-        "AssemblyVersion": "7.4.0.3",
+        "AssemblyVersion": "7.4.0.5",
         "RepoUrl": "https://github.com/Tykku/ToshiBox",
         "ApplicableVersion": "any",
         "Tags": [
@@ -21,6 +21,6 @@
         "DownloadLinkTesting": "https://tykku.github.io/ToshiBox/release/ToshiBox.zip",
         "DownloadLinkUpdate": "https://tykku.github.io/ToshiBox/release/ToshiBox.zip",
         "DownloadCount": 0,
-        "LastUpdate": "1766093116"
+        "LastUpdate": "1766264077"
     }
 ]
