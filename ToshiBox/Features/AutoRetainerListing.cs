@@ -40,6 +40,8 @@ public partial class AutoRetainerListing
     private static uint CurrentItemSearchItemID;
     private static bool IsCurrentItemHQ;
     private static unsafe RetainerManager.Retainer* CurrentRetainer;
+    private static string LastProcessedItemName = string.Empty;
+    private static int LastCalculatedPrice = 0;
     
     public void IsEnabled()
     {
@@ -57,7 +59,7 @@ public partial class AutoRetainerListing
     
     public void Enable()
     {
-        Svc.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, "RetainerSellList", OnRetainerSellList); // List of items
+        Svc.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, "RetainerSellList", OnRetainerSellList);
         Svc.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, "RetainerSell", OnRetainerSell);
         Svc.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, "RetainerSell", OnRetainerSell);
         _events.ListingsStart += OnListingsStart;
@@ -89,7 +91,7 @@ public partial class AutoRetainerListing
     private void OnRetainerSell(AddonEvent eventType, AddonArgs addonInfo)
     {
         if (ImGui.GetIO().KeyShift) return;
-            switch (eventType)
+        switch (eventType)
         {
             case AddonEvent.PostSetup:
                 if (taskManager.IsBusy) return;
@@ -112,7 +114,11 @@ public partial class AutoRetainerListing
     {
         var activeRetainer = RetainerManager.Instance()->GetActiveRetainer();
         if (CurrentRetainer == null || CurrentRetainer != activeRetainer)
+        {
             CurrentRetainer = activeRetainer;
+            LastProcessedItemName = string.Empty;
+            LastCalculatedPrice = 0;
+        }
         else
             return;
 
@@ -122,6 +128,7 @@ public partial class AutoRetainerListing
             CurrentMarketLowestPrice = 0;
         }
     }
+    
     private bool AbortIfShiftHeld()
     {
         if (ImGui.GetIO().KeyShift)
@@ -133,10 +140,9 @@ public partial class AutoRetainerListing
         return true;
     }
 
-    private void EnqueueSingleItem(int index)
+    private unsafe void EnqueueSingleItem(int index)
     {
         taskManager.Enqueue(() => !SearchRunning);
-
         taskManager.Enqueue(AbortIfShiftHeld);
         taskManager.Enqueue(() => ClickSellingItem(index));
         taskManager.EnqueueDelay(100);
@@ -145,16 +151,37 @@ public partial class AutoRetainerListing
         taskManager.Enqueue(ClickAdjustPrice);
         taskManager.EnqueueDelay(100);
 
-        taskManager.Enqueue(AbortIfShiftHeld);
-        taskManager.Enqueue(ClickComparePrice);
-        taskManager.EnqueueDelay(500);
+        taskManager.Enqueue(() => 
+        {
+            if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("RetainerSell", out var addon) && GenericHelpers.IsAddonReady(addon))
+            {
+                string itemName = MemoryHelper.ReadSeStringNullTerminated((nint)addon->AtkValues[1].String.Value).TextValue;
+                
+                if (itemName == LastProcessedItemName && LastCalculatedPrice > 0)
+                {
+                    CurrentMarketLowestPrice = LastCalculatedPrice;
+                    Svc.Log.Info($"Match found for {itemName}. Using cached price: {LastCalculatedPrice}");
+                }
+            }
+            return true;
+        });
 
-        taskManager.Enqueue(AbortIfShiftHeld);
-        taskManager.DefaultConfiguration.AbortOnTimeout = false;
-        taskManager.Enqueue(GetLowestPrice);
-
-        taskManager.DefaultConfiguration.AbortOnTimeout = true;
-        taskManager.EnqueueDelay(100);
+        taskManager.Enqueue(() => 
+        {
+            if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("RetainerSell", out var addon) && GenericHelpers.IsAddonReady(addon))
+            {
+                string itemName = MemoryHelper.ReadSeStringNullTerminated((nint)addon->AtkValues[1].String.Value).TextValue;
+                
+                if (itemName != LastProcessedItemName)
+                {
+                    taskManager.InsertDelay(100);
+                    taskManager.Insert(GetLowestPrice);
+                    taskManager.InsertDelay(500);
+                    taskManager.Insert(ClickComparePrice);
+                }
+            }
+            return true;
+        });
 
         taskManager.Enqueue(AbortIfShiftHeld);
         taskManager.Enqueue(FillLowestPrice);
@@ -268,7 +295,9 @@ public partial class AutoRetainerListing
             {
                 var ui = &addon->AtkUnitBase;
                 var priceComponent = addon->AskingPrice;
-
+                
+                string itemName = MemoryHelper.ReadSeStringNullTerminated((nint)addon->AtkValues[1].String.Value).TextValue;
+    
                 if (CurrentMarketLowestPrice - _config.AutoRetainerListingConfig.PriceReduction < _config.AutoRetainerListingConfig.LowestAcceptablePrice)
                 {
                     SeString message;
@@ -293,8 +322,7 @@ public partial class AutoRetainerListing
                     ui->Close(true);
                     return true;
                 }
-
-
+    
                 if (_config.AutoRetainerListingConfig.MaxPriceReduction != 0 &&
                     CurrentItemPrice - CurrentMarketLowestPrice > _config.AutoRetainerListingConfig.MaxPriceReduction)
                 {
@@ -307,7 +335,10 @@ public partial class AutoRetainerListing
                     ui->Close(true);
                     return true;
                 }
-
+                
+                LastProcessedItemName = itemName;
+                LastCalculatedPrice = CurrentMarketLowestPrice;
+    
                 priceComponent->SetValue(CurrentMarketLowestPrice - _config.AutoRetainerListingConfig.PriceReduction);
                 Callback.Fire((AtkUnitBase*)addon, true, 0);
                 ui->Close(true);
