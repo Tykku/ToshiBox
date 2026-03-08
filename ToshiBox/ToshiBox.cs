@@ -1,4 +1,5 @@
-﻿using Dalamud.Game.Command;
+﻿using System.Collections.Generic;
+using Dalamud.Game.Command;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
@@ -10,6 +11,7 @@ using ToshiBox.Common;
 using ToshiBox.Features;
 using ToshiBox.IPC;
 using ToshiBox.UI;
+using ToshiBox.UI.Features;
 
 namespace ToshiBox
 {
@@ -40,7 +42,12 @@ namespace ToshiBox
 
             PandoraIPC.Init();
 
-            _mainWindow = new MainWindow(AutoRetainerListingInstance, AutoChestOpenInstance, ConfigInstance);
+            var features = new List<IFeatureUI>
+            {
+                new AutoRetainerListingUI(AutoRetainerListingInstance, ConfigInstance),
+                new AutoChestOpenUI(AutoChestOpenInstance, ConfigInstance),
+            };
+            _mainWindow = new MainWindow(features);
             _windowSystem.AddWindow(_mainWindow);
 
             _pluginInterface.UiBuilder.Draw += _windowSystem.Draw;
