@@ -28,6 +28,8 @@ public partial class AutoRetainerListing
     private readonly Config _config;
     private readonly TaskManager taskManager;
     
+    public bool ShowInList => _config.AutoRetainerListingConfig.Enabled;
+
     public AutoRetainerListing(Events events, Config config)
     {
         _events = events;

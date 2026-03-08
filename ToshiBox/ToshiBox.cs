@@ -1,4 +1,5 @@
-﻿using Dalamud.Game.Command;
+﻿using System.Collections.Generic;
+using Dalamud.Game.Command;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
@@ -10,6 +11,7 @@ using ToshiBox.Common;
 using ToshiBox.Features;
 using ToshiBox.IPC;
 using ToshiBox.UI;
+using ToshiBox.UI.Features;
 
 namespace ToshiBox
 {
@@ -21,6 +23,7 @@ namespace ToshiBox
         public Config ConfigInstance;
         public AutoRetainerListing AutoRetainerListingInstance;
         public AutoChestOpen AutoChestOpenInstance;
+        public TurboHotbars TurboHotbarsInstance;
         private readonly IDalamudPluginInterface _pluginInterface;
         public string Name => "ToshiBox";
 
@@ -38,9 +41,18 @@ namespace ToshiBox
             AutoChestOpenInstance = new AutoChestOpen(EventInstance, ConfigInstance);
             AutoChestOpenInstance.IsEnabled();
 
+            TurboHotbarsInstance = new TurboHotbars(ConfigInstance);
+            TurboHotbarsInstance.IsEnabled();
+
             PandoraIPC.Init();
 
-            _mainWindow = new MainWindow(AutoRetainerListingInstance, AutoChestOpenInstance, ConfigInstance);
+            var features = new List<IFeatureUI>
+            {
+                new AutoRetainerListingUI(AutoRetainerListingInstance, ConfigInstance),
+                new AutoChestOpenUI(AutoChestOpenInstance, ConfigInstance),
+                new TurboHotbarsUI(TurboHotbarsInstance, ConfigInstance),
+            };
+            _mainWindow = new MainWindow(features);
             _windowSystem.AddWindow(_mainWindow);
 
             _pluginInterface.UiBuilder.Draw += _windowSystem.Draw;
@@ -84,6 +96,7 @@ namespace ToshiBox
         public void Dispose()
         {
             AutoRetainerListingInstance.Disable();
+            TurboHotbarsInstance.Disable();
             PandoraIPC.Dispose();
             _pluginInterface.UiBuilder.Draw -= _windowSystem.Draw;
             _pluginInterface.UiBuilder.OpenConfigUi -= () => _mainWindow.IsOpen = true;
