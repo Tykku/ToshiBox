@@ -5,9 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="780ba450-9a1a-463d-abfd-5ab98b3838e7" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ToshiBox/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ToshiBox/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ToshiBox/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ToshiBox/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToshiBox/ToshiBox.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/ToshiBox.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToshiBox/Features/AutoRetainerListing.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/Features/AutoRetainerListing.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToshiBox/UI/Features/AutoChestOpenUI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/UI/Features/AutoChestOpenUI.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToshiBox/UI/Features/AutoRetainerListingUI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/UI/Features/AutoRetainerListingUI.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToshiBox/UI/IFeatureUI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/UI/IFeatureUI.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ToshiBox/UI/MainWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/UI/MainWindow.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -121,7 +122,7 @@
       <workItem from="1772981026875" duration="197000" />
       <workItem from="1772981268750" duration="70000" />
       <workItem from="1772981368933" duration="210000" />
-      <workItem from="1772982098165" duration="728000" />
+      <workItem from="1772982098165" duration="1174000" />
     </task>
     <servers />
   </component>

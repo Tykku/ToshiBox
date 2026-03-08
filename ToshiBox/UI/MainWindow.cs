@@ -20,6 +20,9 @@ namespace ToshiBox.UI
 
         public override void Draw()
         {
+            if (_selectedFeature != null && !_selectedFeature.Visible)
+                _selectedFeature = null;
+
             ImGui.BeginChild("ToshiBox_MainChild", new System.Numerics.Vector2(0, 0), false);
 
             float leftWidth = 250f;
@@ -51,6 +54,8 @@ namespace ToshiBox.UI
 
             foreach (var feature in _features)
             {
+                if (!feature.Visible) continue;
+
                 ImGui.PushStyleColor(ImGuiCol.ChildBg, darkerBg);
                 ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new System.Numerics.Vector2(4, 4));
                 ImGui.BeginChild(feature.Name + "_Group", new System.Numerics.Vector2(columnWidth, 40), true, ImGuiWindowFlags.None);

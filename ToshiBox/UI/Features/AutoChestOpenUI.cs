@@ -31,6 +31,8 @@ namespace ToshiBox.UI.Features
             }
         }
 
+        public bool Visible => true;
+
         public void DrawSettings()
         {
             if (!_config.AutoChestOpenConfig.Enabled)

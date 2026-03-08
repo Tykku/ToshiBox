@@ -19,6 +19,7 @@ namespace ToshiBox.UI.Features
         }
 
         public string Name => "Auto Retainer Listing";
+        public bool Visible => _feature.ShowInList;
 
         public bool Enabled
         {
