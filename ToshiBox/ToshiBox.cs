@@ -23,6 +23,7 @@ namespace ToshiBox
         public Config ConfigInstance;
         public AutoRetainerListing AutoRetainerListingInstance;
         public AutoChestOpen AutoChestOpenInstance;
+        public TurboHotbars TurboHotbarsInstance;
         private readonly IDalamudPluginInterface _pluginInterface;
         public string Name => "ToshiBox";
 
@@ -40,12 +41,16 @@ namespace ToshiBox
             AutoChestOpenInstance = new AutoChestOpen(EventInstance, ConfigInstance);
             AutoChestOpenInstance.IsEnabled();
 
+            TurboHotbarsInstance = new TurboHotbars(ConfigInstance);
+            TurboHotbarsInstance.IsEnabled();
+
             PandoraIPC.Init();
 
             var features = new List<IFeatureUI>
             {
                 new AutoRetainerListingUI(AutoRetainerListingInstance, ConfigInstance),
                 new AutoChestOpenUI(AutoChestOpenInstance, ConfigInstance),
+                new TurboHotbarsUI(TurboHotbarsInstance, ConfigInstance),
             };
             _mainWindow = new MainWindow(features);
             _windowSystem.AddWindow(_mainWindow);
@@ -91,6 +96,7 @@ namespace ToshiBox
         public void Dispose()
         {
             AutoRetainerListingInstance.Disable();
+            TurboHotbarsInstance.Disable();
             PandoraIPC.Dispose();
             _pluginInterface.UiBuilder.Draw -= _windowSystem.Draw;
             _pluginInterface.UiBuilder.OpenConfigUi -= () => _mainWindow.IsOpen = true;

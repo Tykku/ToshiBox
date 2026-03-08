@@ -5,10 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="780ba450-9a1a-463d-abfd-5ab98b3838e7" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/ToshiBox/Features/AutoRetainerListing.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/Features/AutoRetainerListing.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToshiBox/UI/Features/AutoChestOpenUI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/UI/Features/AutoChestOpenUI.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToshiBox/UI/Features/AutoRetainerListingUI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/UI/Features/AutoRetainerListingUI.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToshiBox/UI/IFeatureUI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/UI/IFeatureUI.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ToshiBox/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ToshiBox/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToshiBox/Common/Config.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/Common/Config.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToshiBox/ToshiBox.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/ToshiBox.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToshiBox/UI/IFeatureUI.cs" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/ToshiBox/UI/MainWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/UI/MainWindow.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -44,6 +44,7 @@
 }</component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/831d23e56149cd59c40fc00c7feb7c5334bd19c4/src/libraries/System.Private.CoreLib/src/System/Numerics/Vector2.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/94a8f10a196aee071989779fde504e3eced1862ebecaa143530e51880c1ed/IDalamudPlugin.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ToshiBox/Common/Config.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ToshiBox/Features/AutoChestOpen.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ToshiBox/Features/AutoRetainerListing.cs" root0="FORCE_HIGHLIGHTING" />
@@ -122,7 +123,7 @@
       <workItem from="1772981026875" duration="197000" />
       <workItem from="1772981268750" duration="70000" />
       <workItem from="1772981368933" duration="210000" />
-      <workItem from="1772982098165" duration="1174000" />
+      <workItem from="1772982098165" duration="2199000" />
     </task>
     <servers />
   </component>

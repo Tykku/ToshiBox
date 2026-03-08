@@ -6,6 +6,14 @@ using ECommons;
 
 namespace ToshiBox.UI
 {
+    public interface IFeatureUI
+    {
+        string Name { get; }
+        bool Enabled { get; set; }
+        bool Visible { get; }
+        void DrawSettings();
+    }
+
     public class MainWindow : Window
     {
         private readonly IReadOnlyList<IFeatureUI> _features;

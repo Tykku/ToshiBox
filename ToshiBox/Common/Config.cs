@@ -6,6 +6,7 @@ namespace ToshiBox.Common
     {
         public AutoRetainerListingConfig AutoRetainerListingConfig = new();
         public AutoChestOpenConfig AutoChestOpenConfig = new();
+        public TurboHotbarsConfig TurboHotbarsConfig = new();
     }
 
     public class AutoRetainerListingConfig
@@ -27,4 +28,13 @@ namespace ToshiBox.Common
         public float Delay { get; set; } = 0.0f;
     }
 
+    public class TurboHotbarsConfig
+    {
+        public bool Enabled = false;
+        public int Interval = 100;
+        public int InitialInterval = 200;
+        public bool EnableOutOfCombat = false;
+    }
+
 }
+
