@@ -1,15 +1,14 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Dalamud.Game.Command;
 using Dalamud.Game.Text.SeStringHandling;
-using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
 using ECommons;
-using ECommons.Commands;
 using ECommons.Configuration;
 using ECommons.DalamudServices;
 using ToshiBox.Common;
 using ToshiBox.Features;
 using ToshiBox.IPC;
+using ToshiBox.Insights;
 using ToshiBox.UI;
 using ToshiBox.UI.Features;
 
@@ -17,22 +16,22 @@ namespace ToshiBox
 {
     public class ToshiBox : IDalamudPlugin
     {
-        private readonly WindowSystem _windowSystem = new("ToshiBox");
         private MainWindow _mainWindow;
         public Events EventInstance;
         public Config ConfigInstance;
         public AutoRetainerListing AutoRetainerListingInstance;
         public AutoChestOpen AutoChestOpenInstance;
         public TurboHotbars TurboHotbarsInstance;
+        public InsightsEngine? InsightsEngineInstance;
+        public BestDealsEngine? BestDealsEngineInstance;
         private readonly IDalamudPluginInterface _pluginInterface;
         public string Name => "ToshiBox";
 
         public ToshiBox(IDalamudPluginInterface pluginInterface)
         {
             _pluginInterface = pluginInterface;
-            // Initialize ECommons and config
             ECommonsMain.Init(pluginInterface, this);
-            EventInstance = new Events();
+            EventInstance  = new Events();
             ConfigInstance = EzConfig.Init<Config>();
 
             AutoRetainerListingInstance = new AutoRetainerListing(EventInstance, ConfigInstance);
@@ -44,6 +43,9 @@ namespace ToshiBox
             TurboHotbarsInstance = new TurboHotbars(ConfigInstance);
             TurboHotbarsInstance.IsEnabled();
 
+            InsightsEngineInstance  = new InsightsEngine(ConfigInstance);
+            BestDealsEngineInstance = new BestDealsEngine(ConfigInstance);
+
             PandoraIPC.Init();
 
             var features = new List<IFeatureUI>
@@ -51,13 +53,13 @@ namespace ToshiBox
                 new AutoRetainerListingUI(AutoRetainerListingInstance, ConfigInstance),
                 new AutoChestOpenUI(AutoChestOpenInstance, ConfigInstance),
                 new TurboHotbarsUI(TurboHotbarsInstance, ConfigInstance),
+                new MarketInsightsUI(InsightsEngineInstance, BestDealsEngineInstance, ConfigInstance),
             };
-            _mainWindow = new MainWindow(features);
-            _windowSystem.AddWindow(_mainWindow);
+            _mainWindow = new MainWindow(features, ConfigInstance);
 
-            _pluginInterface.UiBuilder.Draw += _windowSystem.Draw;
-            _pluginInterface.UiBuilder.OpenConfigUi += () => _mainWindow.IsOpen = true;
-            _pluginInterface.UiBuilder.OpenMainUi += () => _mainWindow.IsOpen = true;
+            _pluginInterface.UiBuilder.Draw += _mainWindow.Draw;
+            _pluginInterface.UiBuilder.OpenConfigUi += OpenMainWindow;
+            _pluginInterface.UiBuilder.OpenMainUi   += OpenMainWindow;
 
             Svc.Commands.AddHandler("/toshibox", new CommandInfo(OnCommand)
             {
@@ -69,6 +71,8 @@ namespace ToshiBox
             });
         }
 
+        private void OpenMainWindow() => _mainWindow.IsOpen = true;
+
         public void OnCommand(string command, string args)
         {
             if (string.Equals(args, "toggleshangriladida009"))
@@ -76,31 +80,35 @@ namespace ToshiBox
                 ConfigInstance.AutoRetainerListingConfig.Enabled = !ConfigInstance.AutoRetainerListingConfig.Enabled;
                 AutoRetainerListingInstance.IsEnabled();
                 EzConfig.Save();
+                return;
             }
 
             if (string.Equals(args, "colors"))
             {
                 var ssb = new SeStringBuilder();
-                for (ushort i = 0; i <= 50; i++) {
+                for (ushort i = 0; i <= 50; i++)
+                {
                     ssb.AddUiForeground($"Color ID {i} ", i);
                     ssb.AddText("\n");
                 }
                 Svc.Chat.Print(ssb.BuiltString);
+                return;
             }
-            else
-            {
-                _mainWindow.IsOpen = !_mainWindow.IsOpen;
-            }
+
+            _mainWindow.IsOpen = !_mainWindow.IsOpen;
         }
 
         public void Dispose()
         {
             AutoRetainerListingInstance.Disable();
             TurboHotbarsInstance.Disable();
+            InsightsEngineInstance?.Dispose();
+            BestDealsEngineInstance?.Dispose();
             PandoraIPC.Dispose();
-            _pluginInterface.UiBuilder.Draw -= _windowSystem.Draw;
-            _pluginInterface.UiBuilder.OpenConfigUi -= () => _mainWindow.IsOpen = true;
-            _pluginInterface.UiBuilder.OpenMainUi -= () => _mainWindow.IsOpen = true;
+
+            _pluginInterface.UiBuilder.Draw          -= _mainWindow.Draw;
+            _pluginInterface.UiBuilder.OpenConfigUi  -= OpenMainWindow;
+            _pluginInterface.UiBuilder.OpenMainUi    -= OpenMainWindow;
 
             Svc.Commands.RemoveHandler("/toshibox");
             Svc.Commands.RemoveHandler("/toshi");

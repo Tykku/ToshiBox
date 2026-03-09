@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using System.Numerics;
 using Dalamud.Bindings.ImGui;
-using Dalamud.Interface.Colors;
-using Dalamud.Interface.Windowing;
-using ECommons;
+using Dalamud.Interface;
+using ECommons.Configuration;
+using ToshiBox.Common;
 
 namespace ToshiBox.UI
 {
@@ -11,92 +12,160 @@ namespace ToshiBox.UI
         string Name { get; }
         bool Enabled { get; set; }
         bool Visible { get; }
+        bool HasEnabledToggle => true;
         void DrawSettings();
     }
 
-    public class MainWindow : Window
+    public class MainWindow
     {
         private readonly IReadOnlyList<IFeatureUI> _features;
-        private IFeatureUI? _selectedFeature;
+        private readonly Dictionary<string, IFeatureUI> _featuresByName;
+        private readonly Config _config;
 
-        public MainWindow(IReadOnlyList<IFeatureUI> features)
-            : base("ToshiBox Settings")
+        private string _selectedPage = string.Empty;
+
+        public bool IsOpen;
+
+        private const float SidebarWidth = 200f;
+
+        private static readonly (string Group, FontAwesomeIcon GroupIcon, string[] Pages)[] Groups =
+        {
+            ("Features", FontAwesomeIcon.Cogs,   new[] { "Auto Retainer Listing", "Auto Chest Open", "Turbo Hotbars" }),
+            ("Tools",    FontAwesomeIcon.Wrench,  new[] { "Market Insights" }),
+        };
+
+        private static readonly Dictionary<string, FontAwesomeIcon> PageIcons = new()
+        {
+            ["Auto Retainer Listing"] = FontAwesomeIcon.Tag,
+            ["Auto Chest Open"]       = FontAwesomeIcon.BoxOpen,
+            ["Turbo Hotbars"]         = FontAwesomeIcon.Bolt,
+            ["Market Insights"]       = FontAwesomeIcon.ChartLine,
+        };
+
+        public MainWindow(IReadOnlyList<IFeatureUI> features, Config config)
         {
             _features = features;
-            this.SetMinSize(new System.Numerics.Vector2(580, 250));
+            _config   = config;
+
+            _featuresByName = new Dictionary<string, IFeatureUI>();
+            foreach (var f in features)
+                _featuresByName[f.Name] = f;
         }
 
-        public override void Draw()
+        public void Draw()
         {
-            if (_selectedFeature != null && !_selectedFeature.Visible)
-                _selectedFeature = null;
+            if (!IsOpen) return;
 
-            ImGui.BeginChild("ToshiBox_MainChild", new System.Numerics.Vector2(0, 0), false);
+            ImGui.SetNextWindowSize(new Vector2(780, 480), ImGuiCond.FirstUseEver);
+            ImGui.SetNextWindowSizeConstraints(new Vector2(580, 300), new Vector2(float.MaxValue, float.MaxValue));
 
-            float leftWidth = 250f;
-
-            ImGui.BeginChild("LeftPanel", new System.Numerics.Vector2(leftWidth, 0), true);
-            ImGui.TextColored(ImGuiColors.DalamudWhite, "Features");
-            ImGui.Separator();
-            DrawFeatureList();
-            ImGui.EndChild();
-
-            ImGui.SameLine();
-
-            ImGui.BeginChild("RightPanel", new System.Numerics.Vector2(0, 0), true);
-            ImGui.TextColored(ImGuiColors.DalamudWhite, "Settings");
-            ImGui.Separator();
-            DrawSettingsPanel();
-            ImGui.EndChild();
-
-            ImGui.EndChild();
-        }
-
-        private void DrawFeatureList()
-        {
-            float columnWidth = ImGui.GetColumnWidth();
-            float checkboxWidth = ImGui.GetFrameHeight();
-            float spacing = ImGui.GetStyle().ItemSpacing.X;
-            float selectableWidth = columnWidth - checkboxWidth - spacing;
-            var darkerBg = new System.Numerics.Vector4(0.15f, 0.15f, 0.15f, 1.0f);
-
-            foreach (var feature in _features)
+            ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(12, 12));
+            if (!ImGui.Begin("ToshiBox###ToshiBoxMain", ref IsOpen))
             {
-                if (!feature.Visible) continue;
-
-                ImGui.PushStyleColor(ImGuiCol.ChildBg, darkerBg);
-                ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new System.Numerics.Vector2(4, 4));
-                ImGui.BeginChild(feature.Name + "_Group", new System.Numerics.Vector2(columnWidth, 40), true, ImGuiWindowFlags.None);
-
-                bool enabled = feature.Enabled;
-                ImGui.Checkbox("##" + feature.Name, ref enabled);
-                if (ImGui.IsItemDeactivatedAfterEdit())
-                    feature.Enabled = enabled;
-
-                ImGui.SameLine();
-
-                bool selected = _selectedFeature == feature;
-                if (ImGui.Selectable(feature.Name, selected, ImGuiSelectableFlags.None, new System.Numerics.Vector2(selectableWidth, 0)))
-                    _selectedFeature = feature;
-
-                ImGui.EndChild();
                 ImGui.PopStyleVar();
-                ImGui.PopStyleColor();
-                ImGui.Spacing();
+                ImGui.End();
+                return;
             }
+            ImGui.PopStyleVar();
+
+            ImGui.PushStyleVar(ImGuiStyleVar.ChildRounding, Theme.RoundingLarge);
+
+            DrawSidebar();
+            ImGui.SameLine(0, 5);
+
+            if (ImGui.BeginChild("TBBody", ImGui.GetContentRegionAvail(), true))
+                DrawContent();
+            ImGui.EndChild();
+
+            ImGui.PopStyleVar();
+
+            ImGui.End();
         }
 
-        private void DrawSettingsPanel()
+        private void DrawSidebar()
         {
-            if (_selectedFeature == null)
+            ImGui.PushStyleColor(ImGuiCol.ChildBg, Theme.SidebarBg);
+            ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(6, 8));
+
+            if (ImGui.BeginChild("TBSidebar", new Vector2(SidebarWidth, -1), true))
             {
-                ImGui.TextColored(ImGuiColors.DalamudGrey, "Select a feature on the left to see its settings.");
+                // Ensure selected page is still visible; clear if not
+                if (!string.IsNullOrEmpty(_selectedPage) &&
+                    _featuresByName.TryGetValue(_selectedPage, out var sel) && !sel.Visible)
+                    _selectedPage = string.Empty;
+
+                foreach (var (group, groupIcon, pages) in Groups)
+                {
+                    if (!_config.SidebarGroupExpanded.ContainsKey(group))
+                        _config.SidebarGroupExpanded[group] = true;
+
+                    var expanded = _config.SidebarGroupExpanded[group];
+                    if (Theme.SidebarGroupHeader(group, ref expanded, groupIcon))
+                    {
+                        ImGui.Spacing();
+                        foreach (var page in pages)
+                        {
+                            // Skip if the feature isn't visible (e.g. AutoRetainerListing when disabled)
+                            if (_featuresByName.TryGetValue(page, out var feature) && !feature.Visible)
+                                continue;
+
+                            var icon = PageIcons.GetValueOrDefault(page, (FontAwesomeIcon)0);
+                            if (Theme.SidebarItem(page, _selectedPage == page, icon))
+                                _selectedPage = page;
+                        }
+                        ImGui.Spacing();
+                    }
+
+                    if (expanded != _config.SidebarGroupExpanded[group])
+                    {
+                        _config.SidebarGroupExpanded[group] = expanded;
+                        EzConfig.Save();
+                    }
+                }
+            }
+            ImGui.EndChild();
+
+            ImGui.PopStyleVar();
+            ImGui.PopStyleColor();
+        }
+
+        private void DrawContent()
+        {
+            if (string.IsNullOrEmpty(_selectedPage))
+            {
+                var avail = ImGui.GetContentRegionAvail();
+                var text  = "Select a feature from the sidebar.";
+                var ts    = ImGui.CalcTextSize(text);
+                ImGui.SetCursorPos(new Vector2((avail.X - ts.X) / 2, (avail.Y - ts.Y) / 2));
+                ImGui.TextColored(Theme.TextMuted, text);
                 return;
             }
 
-            ImGui.Text(_selectedFeature.Name);
+            if (!_featuresByName.TryGetValue(_selectedPage, out var feature))
+                return;
+
+            // Page header
+            Theme.SectionHeader(_selectedPage);
+            ImGui.Spacing();
             ImGui.Separator();
-            _selectedFeature.DrawSettings();
+            ImGui.Spacing();
+
+            // Enable toggle (above settings) — skipped for features that don't need it
+            if (feature.HasEnabledToggle)
+            {
+                var enabled = feature.Enabled;
+                if (Theme.ToggleSwitch("feature_enabled", enabled ? "Enabled" : "Disabled", ref enabled))
+                    feature.Enabled = enabled;
+
+                ImGui.Spacing();
+                ImGui.Separator();
+                ImGui.Spacing();
+            }
+
+            // Feature settings
+            Theme.PushFrameStyle();
+            feature.DrawSettings();
+            Theme.PopFrameStyle();
         }
     }
 }

@@ -1,12 +1,28 @@
+using System.Collections.Generic;
 using ECommons.Configuration;
 
 namespace ToshiBox.Common
 {
     public class Config
     {
+        public Dictionary<string, bool> SidebarGroupExpanded = new();
         public AutoRetainerListingConfig AutoRetainerListingConfig = new();
         public AutoChestOpenConfig AutoChestOpenConfig = new();
         public TurboHotbarsConfig TurboHotbarsConfig = new();
+        public MarketInsightsConfig MarketInsightsConfig = new();
+    }
+
+    public class MarketInsightsConfig
+    {
+        public string DataCenter = "";
+        public int RefreshIntervalMinutes = 0; // 0 = manual only
+
+        // Best Deals (Saddlebag Exchange)
+        public string BestDealsHomeServer  = "";
+        public int    BestDealsDiscount    = 70;    // minimum discount % (70 = 30% off)
+        public int    BestDealsMinMedian   = 50000; // min median price on home server
+        public int    BestDealsMaxBuyPrice = 20000; // max gil to spend per item
+        public int    BestDealsMinSales    = 20;    // min sales in last 7 days
     }
 
     public class AutoRetainerListingConfig
