@@ -6,10 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="780ba450-9a1a-463d-abfd-5ab98b3838e7" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ToshiBox/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ToshiBox/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToshiBox/Common/Config.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/Common/Config.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToshiBox/ToshiBox.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/ToshiBox.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToshiBox/UI/IFeatureUI.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToshiBox/UI/MainWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/UI/MainWindow.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,7 +13,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="53" />
+    <option name="cachedIndexableFilesCount" value="54" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
@@ -50,6 +46,7 @@
     <setting file="file://$PROJECT_DIR$/ToshiBox/Features/AutoRetainerListing.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ToshiBox/IPC/PandoraIPC.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ToshiBox/UI/MainWindow.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/manifest.json" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="McpProjectServerCommands">
     <commands />
@@ -70,22 +67,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "git-widget-placeholder": "UI-overhaul",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "terminal",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;terminal&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -124,6 +121,8 @@
       <workItem from="1772981268750" duration="70000" />
       <workItem from="1772981368933" duration="210000" />
       <workItem from="1772982098165" duration="2199000" />
+      <workItem from="1773008532084" duration="1866000" />
+      <workItem from="1773032929971" duration="765000" />
     </task>
     <servers />
   </component>
