@@ -26,7 +26,7 @@ namespace ToshiBox
         public TurboHotbars TurboHotbarsInstance;
         private readonly IDalamudPluginInterface _pluginInterface;
         public string Name => "ToshiBox";
-
+        //Hello, there!
         public ToshiBox(IDalamudPluginInterface pluginInterface)
         {
             _pluginInterface = pluginInterface;
