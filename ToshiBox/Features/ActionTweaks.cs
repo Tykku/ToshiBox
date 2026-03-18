@@ -171,7 +171,8 @@ namespace ToshiBox.Features
 
                 if (Cfg.RemoveAnimationLockDelay)
                 {
-                    var reduction = Math.Clamp(DelayAverage - DelayMax, 0, _inst->AnimationLock);
+                    var basis = Cfg.UseSmoothedDelay ? DelayAverage : delay;
+                    var reduction = Math.Clamp(basis - DelayMax, 0, _inst->AnimationLock);
                     _inst->AnimationLock -= reduction;
                 }
             }

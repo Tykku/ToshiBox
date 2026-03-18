@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="780ba450-9a1a-463d-abfd-5ab98b3838e7" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ToshiBox/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ToshiBox/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToshiBox/Common/Config.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/Common/Config.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ToshiBox/Features/ActionTweaks.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/Features/ActionTweaks.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ToshiBox/UI/Features/ActionTweaksUI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ToshiBox/UI/Features/ActionTweaksUI.cs" afterDir="false" />
     </list>
@@ -127,6 +128,7 @@
       <workItem from="1773032929971" duration="765000" />
       <workItem from="1773802708645" duration="2630000" />
       <workItem from="1773844787732" duration="1329000" />
+      <workItem from="1773863706678" duration="3644000" />
     </task>
     <servers />
   </component>
