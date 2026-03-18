@@ -47,6 +47,14 @@ namespace ToshiBox.UI.Features
                 }
                 if (ImGui.IsItemHovered())
                     ImGui.SetTooltip("Maximum simulated delay in ms.\n20ms enables triple-weaving.\nMinimum to prevent triple-weaving is 26ms.");
+                bool smoothed = _config.ActionTweaksConfig.UseSmoothedDelay;
+                if (ImGui.Checkbox("Use smoothed delay (enable with high jitter in ping)", ref smoothed))
+                {
+                    _config.ActionTweaksConfig.UseSmoothedDelay = smoothed;
+                    EzConfig.Save();
+                }
+                if (ImGui.IsItemHovered())
+                    ImGui.SetTooltip("Smooths delay over recent actions instead of reacting per-action.\nMore stable on unstable connections.");
                 ImGui.Unindent();
                 ImGui.PopItemWidth();
             }

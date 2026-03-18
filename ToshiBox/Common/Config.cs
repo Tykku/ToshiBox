@@ -57,6 +57,7 @@ namespace ToshiBox.Common
     {
         public bool RemoveAnimationLockDelay = false;
         public int AnimationLockDelayMax = 20;
+        public bool UseSmoothedDelay = false;
         public bool RemoveCooldownDelay = false;
         public int CooldownDelayMax = 100;
     }
