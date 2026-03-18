@@ -46,7 +46,7 @@ namespace ToshiBox.UI.Features
                     EzConfig.Save();
                 }
                 if (ImGui.IsItemHovered())
-                    ImGui.SetTooltip("Maximum simulated delay in ms.\n20ms enables triple-weaving.\nMinimum to prevent triple-weaving is 26ms.\nSetting this to 0 is very dangerous!");
+                    ImGui.SetTooltip("Maximum simulated delay in ms.\n20ms enables triple-weaving.\nMinimum to prevent triple-weaving is 26ms.");
                 ImGui.Unindent();
                 ImGui.PopItemWidth();
             }
@@ -61,23 +61,10 @@ namespace ToshiBox.UI.Features
                 EzConfig.Save();
             }
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip("Adjusts cooldown and animation locks so queued actions resolve immediately,\nregardless of your current framerate.\nDefault is 100, anything else doesn't matter.");
+                ImGui.SetTooltip("Adjusts cooldown and animation locks so queued actions resolve immediately,\nregardless of your current framerate.");
 
             if (cooldown)
-            {
-                ImGui.PushItemWidth(250f);
-                ImGui.Indent();
-                int cooldownMax = _config.ActionTweaksConfig.CooldownDelayMax;
-                if (ImGui.SliderInt("Max cooldown adjustment (ms)", ref cooldownMax, 0, 200))
-                {
-                    _config.ActionTweaksConfig.CooldownDelayMax = cooldownMax;
-                    EzConfig.Save();
-                }
-                if (ImGui.IsItemHovered())
-                    ImGui.SetTooltip("Maximum adjustment in ms applied to cooldowns and animation locks.\nHigher values help at very low framerates but may look suspicious on logs.");
-                ImGui.Unindent();
-                ImGui.PopItemWidth();
-            }
+                _config.ActionTweaksConfig.CooldownDelayMax = 100;
         }
     }
 }
