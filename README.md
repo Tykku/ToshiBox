@@ -1,5 +1,9 @@
 # ToshiBox 
 
+![Github Latest Releases](https://img.shields.io/github/downloads/Tykku/ToshiBox/latest/total.svg?style=for-the-badge)
+![Github All Releases](https://img.shields.io/github/downloads/Tykku/ToshiBox/total.svg?style=for-the-badge)
+![Github License](https://img.shields.io/github/license/Tykku/ToshiBox.svg?label=License&style=for-the-badge)
+
 ## 📦 Installation (Dalamud Third-Party Plugin)
 
 To install this plugin in XIVLauncher / Dalamud:
