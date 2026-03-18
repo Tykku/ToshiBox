@@ -10,6 +10,7 @@ namespace ToshiBox.UI
     public interface IFeatureUI
     {
         string Name { get; }
+        string SidebarName => Name;
         bool Enabled { get; set; }
         bool Visible { get; }
         bool HasEnabledToggle => true;
@@ -30,7 +31,7 @@ namespace ToshiBox.UI
 
         private static readonly (string Group, FontAwesomeIcon GroupIcon, string[] Pages)[] Groups =
         {
-            ("Features", FontAwesomeIcon.Cogs,   new[] { "Auto Retainer Listing", "Auto Chest Open", "Turbo Hotbars" }),
+            ("Features", FontAwesomeIcon.Cogs,   new[] { "Auto Retainer Listing", "Auto Chest Open", "Turbo Hotbars", "Action Tweaks : WARNING: DO NOT USE WITH NOCLIPPY, BOSSMOD ACTION TWEAKS, OR XIVALEXANDER!" }),
             ("Tools",    FontAwesomeIcon.Wrench,  new[] { "Market Insights" }),
         };
 
@@ -39,6 +40,7 @@ namespace ToshiBox.UI
             ["Auto Retainer Listing"] = FontAwesomeIcon.Tag,
             ["Auto Chest Open"]       = FontAwesomeIcon.BoxOpen,
             ["Turbo Hotbars"]         = FontAwesomeIcon.Bolt,
+            ["Action Tweaks : WARNING: DO NOT USE WITH NOCLIPPY, BOSSMOD ACTION TWEAKS, OR XIVALEXANDER!"]         = FontAwesomeIcon.Gauge,
             ["Market Insights"]       = FontAwesomeIcon.ChartLine,
         };
 
@@ -110,7 +112,8 @@ namespace ToshiBox.UI
                                 continue;
 
                             var icon = PageIcons.GetValueOrDefault(page, (FontAwesomeIcon)0);
-                            if (Theme.SidebarItem(page, _selectedPage == page, icon))
+                            var label = feature?.SidebarName ?? page;
+                            if (Theme.SidebarItem(label, _selectedPage == page, icon))
                                 _selectedPage = page;
                         }
                         ImGui.Spacing();
