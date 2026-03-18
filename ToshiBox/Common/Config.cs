@@ -9,6 +9,7 @@ namespace ToshiBox.Common
         public AutoRetainerListingConfig AutoRetainerListingConfig = new();
         public AutoChestOpenConfig AutoChestOpenConfig = new();
         public TurboHotbarsConfig TurboHotbarsConfig = new();
+        public ActionTweaksConfig ActionTweaksConfig = new();
         public MarketInsightsConfig MarketInsightsConfig = new();
     }
 
@@ -50,6 +51,14 @@ namespace ToshiBox.Common
         public int Interval = 100;
         public int InitialInterval = 200;
         public bool EnableOutOfCombat = false;
+    }
+
+    public class ActionTweaksConfig
+    {
+        public bool RemoveAnimationLockDelay = false;
+        public int AnimationLockDelayMax = 20;
+        public bool RemoveCooldownDelay = false;
+        public int CooldownDelayMax = 100;
     }
 
 }
