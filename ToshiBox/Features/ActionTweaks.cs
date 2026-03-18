@@ -164,13 +164,14 @@ namespace ToshiBox.Features
             if (Cfg.RemoveAnimationLockDelay && _lastReqSequence == (int)header->SourceSequence && _lastReqInitialAnimLock > 0)
             {
                 var delay = _lastReqInitialAnimLock - prevAnimLock;
-                DelayAverage = delay * (1 - DelaySmoothing) + DelayAverage * DelaySmoothing;
+                var alpha = delay > DelayAverage ? (1 - DelaySmoothing) * 2.5f : (1 - DelaySmoothing) * 0.5f;
+                DelayAverage = delay * alpha + DelayAverage * (1 - alpha);
 
                 SanityCheck(packetAnimLock, header->AnimationLock, _inst->AnimationLock);
 
                 if (Cfg.RemoveAnimationLockDelay)
                 {
-                    var reduction = Math.Clamp(delay - DelayMax, 0, _inst->AnimationLock);
+                    var reduction = Math.Clamp(DelayAverage - DelayMax, 0, _inst->AnimationLock);
                     _inst->AnimationLock -= reduction;
                 }
             }
