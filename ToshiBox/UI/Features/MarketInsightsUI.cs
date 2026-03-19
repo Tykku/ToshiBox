@@ -39,7 +39,8 @@ namespace ToshiBox.UI.Features
         private int    _bdMaxBuyPrice;
         private int    _bdMinSales;
 
-        private static readonly string[] DcNames = { "Aether", "Primal", "Crystal", "Dynamis", "Chaos", "Light", "Elemental", "Gaia", "Mana", "Meteor", "Materia", "Shadow" };
+        private static readonly string[] DcNames = ["Aether", "Primal", "Crystal", "Dynamis", "Chaos", "Light", "Elemental", "Gaia", "Mana", "Meteor", "Materia", "Shadow"
+        ];
         private static readonly Vector2 IconSm  = new(24, 24);
         private static readonly Vector2 IconRow = new(32, 32);
 
