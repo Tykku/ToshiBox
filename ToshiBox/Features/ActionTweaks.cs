@@ -1,36 +1,57 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Hooking;
+using Dalamud.Plugin.Services;
 using ECommons.DalamudServices;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.Game.Character;
-using ECommons.GameHelpers;
+using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
-using FFXIVClientStructs.FFXIV.Client.System.Framework;
-using System.Numerics;
+using FFXIVClientStructs.FFXIV.Client.System.Input;
 using ToshiBox.Common;
+using LuminaAction = Lumina.Excel.Sheets.Action;
 
 namespace ToshiBox.Features
 {
     public unsafe class ActionTweaks : IDisposable
     {
         private readonly Config _config;
-        private ActionTweaksConfig Cfg => _config.ActionTweaksConfig;
-        private ActionManager* _inst => ActionManager.Instance();
+        private TurboHotbarsConfig TurboCfg => _config.TurboHotbarsConfig;
+        private CameraRelativeDashesConfig DashCfg => _config.CameraRelativeDashesConfig;
+        private AutoDismountConfig DismountCfg => _config.AutoDismountConfig;
 
-        // Animation lock tweak state
-        private float _lastReqInitialAnimLock;
-        private int _lastReqSequence = -1;
-        private const float DelaySmoothing = 0.8f;
-        public float DelayAverage { get; private set; } = 0.1f;
-        private float DelayMax => Cfg.AnimationLockDelayMax * 0.001f;
+        // ======= Turbo Hotbars =======
 
-        // Cooldown delay tweak state
-        private float _cooldownAdjustment;
+        private class TurboInfo
+        {
+            public Stopwatch LastPress { get; } = new();
+            public bool LastFrameHeld { get; set; } = false;
+            public int RepeatDelay { get; set; } = 0;
+            public bool IsReady => LastPress.IsRunning && LastPress.ElapsedMilliseconds >= RepeatDelay;
+        }
 
-        // Hooks
-        private Hook<ActionManager.Delegates.Update>? _updateHook;
-        private Hook<ActionManager.Delegates.UseActionLocation>? _useActionLocationHook;
-        private Hook<ActionEffectHandler.Delegates.Receive>? _actionEffectHook;
+        private static readonly Dictionary<uint, TurboInfo> inputIDInfos = new();
+        private static bool isAnyTurboRunning;
+
+        private delegate byte IsInputIDDelegate(nint inputData, uint id);
+        private delegate void CheckHotbarBindingsDelegate(nint a1, byte a2);
+
+        private Hook<IsInputIDDelegate>? _isInputIDPressedHook;
+        private Hook<CheckHotbarBindingsDelegate>? _checkHotbarBindingsHook;
+
+        // ======= Camera Relative Dashes / Auto Dismount =======
+
+        private Hook<ActionManager.Delegates.UseAction>? _useActionHook;
+
+        // ======= Auto Dismount =======
+
+        private bool _isMountActionQueued;
+        private (ActionType actionType, uint actionId, ulong targetId, uint extraParam, ActionManager.UseActionMode mode, uint comboRouteId) _queuedMountAction;
+        private readonly Stopwatch _mountActionTimer = new();
+
+        // ======= Constructor =======
 
         public ActionTweaks(Config config)
         {
@@ -39,159 +60,182 @@ namespace ToshiBox.Features
 
         public void IsEnabled()
         {
-            if (Cfg.RemoveAnimationLockDelay || Cfg.RemoveCooldownDelay)
-                Enable();
-            else
-                Disable();
+            if (TurboCfg.Enabled) EnableTurbo();
+            else DisableTurbo();
+
+            if (DashCfg.Enabled || DismountCfg.Enabled) EnableUseAction();
+            else DisableUseAction();
+
+            if (DismountCfg.Enabled) Svc.Framework.Update += OnUpdate;
+            else Svc.Framework.Update -= OnUpdate;
         }
 
-        public void Enable()
+        public void Dispose()
         {
-            if (_updateHook != null) return;
-
-            _updateHook = Svc.Hook.HookFromAddress<ActionManager.Delegates.Update>(
-                ActionManager.Addresses.Update.Value, UpdateDetour);
-            _useActionLocationHook = Svc.Hook.HookFromAddress<ActionManager.Delegates.UseActionLocation>(
-                ActionManager.Addresses.UseActionLocation.Value, UseActionLocationDetour);
-            _actionEffectHook = Svc.Hook.HookFromAddress<ActionEffectHandler.Delegates.Receive>(
-                ActionEffectHandler.Addresses.Receive.Value, ActionEffectReceiveDetour);
-
-            _updateHook.Enable();
-            _useActionLocationHook.Enable();
-            _actionEffectHook.Enable();
+            DisableTurbo();
+            DisableUseAction();
+            Svc.Framework.Update -= OnUpdate;
         }
 
-        public void Disable()
+        // ======= Turbo Hotbars =======
+
+        private void EnableTurbo()
         {
-            _updateHook?.Disable();
-            _updateHook?.Dispose();
-            _updateHook = null;
+            if (_checkHotbarBindingsHook != null) return;
 
-            _useActionLocationHook?.Disable();
-            _useActionLocationHook?.Dispose();
-            _useActionLocationHook = null;
+            var bindingsAddr = Svc.SigScanner.ScanText("89 54 24 10 53 41 55 41 57 48 83 EC 40 4C 8B E9 8B DA");
 
-            _actionEffectHook?.Disable();
-            _actionEffectHook?.Dispose();
-            _actionEffectHook = null;
-
-            _cooldownAdjustment = 0;
-            _lastReqInitialAnimLock = 0;
-            _lastReqSequence = -1;
+            _isInputIDPressedHook    = Svc.Hook.HookFromAddress<IsInputIDDelegate>(InputData.Addresses.IsInputIdPressed.Value, IsInputIDPressedDetour);
+            _checkHotbarBindingsHook = Svc.Hook.HookFromAddress<CheckHotbarBindingsDelegate>(bindingsAddr, CheckHotbarBindingsDetour);
+            _checkHotbarBindingsHook.Enable();
+            // _isInputIDPressedHook is enabled/disabled inside CheckHotbarBindingsDetour
         }
 
-        public void Dispose() => Disable();
-
-        private void UpdateDetour(ActionManager* self)
+        private void DisableTurbo()
         {
-            var fwk = Framework.Instance();
-            var dt = fwk->GameSpeedMultiplier * fwk->FrameDeltaTime;
-            _cooldownAdjustment = Cfg.RemoveCooldownDelay ? CalculateCooldownAdjustment(dt) : 0;
+            _isInputIDPressedHook?.Disable();
+            _isInputIDPressedHook?.Dispose();
+            _isInputIDPressedHook = null;
 
-            _updateHook!.Original(self);
+            _checkHotbarBindingsHook?.Disable();
+            _checkHotbarBindingsHook?.Dispose();
+            _checkHotbarBindingsHook = null;
 
-            _cooldownAdjustment = 0;
+            inputIDInfos.Clear();
         }
 
-        private float CalculateCooldownAdjustment(float dt)
+        private byte IsInputIDPressedDetour(nint inputData, uint id)
         {
-            var animLock = _inst->AnimationLock;
-            float remainingCooldown = 0;
+            if (!inputIDInfos.TryGetValue(id, out var info))
+                inputIDInfos[id] = info = new TurboInfo();
 
-            if (_inst->ActionQueued)
+            var isPressed = _isInputIDPressedHook!.Original(inputData, id) != 0;
+            var isHeld    = ((InputData*)inputData)->IsInputIdDown((InputId)id);
+            var useHeld   = info.IsReady && (TurboCfg.EnableOutOfCombat || Svc.Condition[ConditionFlag.InCombat]);
+            var ret       = useHeld ? isHeld : isPressed;
+
+            if (ret)
             {
-                var recastGroup = _inst->GetRecastGroup((int)_inst->QueuedActionType, _inst->QueuedActionId);
-                if (recastGroup >= 0)
-                {
-                    var recast = _inst->GetRecastGroupDetail(recastGroup);
-                    if (recast != null && recast->IsActive)
-                        remainingCooldown = recast->Total - recast->Elapsed;
-                }
+                info.RepeatDelay = isPressed && TurboCfg.InitialInterval > 0
+                    ? TurboCfg.InitialInterval
+                    : TurboCfg.Interval;
+                info.LastPress.Restart();
+            }
+            else if (isHeld != info.LastFrameHeld)
+            {
+                if (isHeld && isAnyTurboRunning) { info.RepeatDelay = 200; info.LastPress.Restart(); }
+                else info.LastPress.Reset();
             }
 
-            var maxDelay = Math.Max(animLock, remainingCooldown);
-            if (maxDelay <= 0)
-                return 0;
-
-            var overflow = dt - maxDelay;
-            return Math.Clamp(overflow, 0, Cfg.CooldownDelayMax * 0.001f);
+            info.LastFrameHeld = isHeld;
+            return (byte)(ret ? 1 : 0);
         }
 
-        private bool UseActionLocationDetour(ActionManager* self, ActionType actionType, uint actionId, ulong targetId, Vector3* location, uint extraParam, byte a7)
+        private void CheckHotbarBindingsDetour(nint a1, byte a2)
         {
-            var prevSeq = _inst->LastUsedActionSequence;
-            var ret = _useActionLocationHook!.Original(self, actionType, actionId, targetId, location, extraParam, a7);
-            var currSeq = _inst->LastUsedActionSequence;
+            isAnyTurboRunning = inputIDInfos.Any(t => t.Value.LastPress.IsRunning);
+            _isInputIDPressedHook!.Enable();
+            _checkHotbarBindingsHook!.Original(a1, a2);
+            _isInputIDPressedHook.Disable();
+        }
 
-            if (currSeq != prevSeq)
+        // ======= Camera Relative Dashes =======
+
+        private void EnableUseAction()
+        {
+            if (_useActionHook != null) return;
+            try
             {
-                _lastReqInitialAnimLock = _inst->AnimationLock;
-                _lastReqSequence = (int)currSeq;
+                _useActionHook = Svc.Hook.HookFromAddress<ActionManager.Delegates.UseAction>(
+                    ActionManager.Addresses.UseAction.Value, UseActionDetour);
+                _useActionHook.Enable();
+            }
+            catch
+            {
+                Svc.Log.Warning("[ActionTweaks] Failed to hook UseAction.");
+            }
+        }
 
-                if (_cooldownAdjustment > 0)
+        private void DisableUseAction()
+        {
+            _useActionHook?.Disable();
+            _useActionHook?.Dispose();
+            _useActionHook = null;
+        }
+
+        private bool UseActionDetour(ActionManager* am, ActionType actionType, uint actionId,
+            ulong targetId, uint extraParam, ActionManager.UseActionMode mode, uint comboRouteId, bool* outOptAreaTargeted)
+        {
+            if (DashCfg.Enabled && actionType == ActionType.Action)
+            {
+                var adjustedId = am->GetAdjustedActionId(actionId);
+                if (ShouldRotate(adjustedId)
+                    && am->GetActionStatus(ActionType.Action, adjustedId) == 0
+                    && am->AnimationLock == 0)
                 {
-                    var castTimeRemaining = _inst->CastSpellId != 0 ? _inst->CastTimeTotal - _inst->CastTimeElapsed : 0f;
-                    if (castTimeRemaining > 0)
-                        _inst->CastTimeElapsed += _cooldownAdjustment;
-                    else
-                        _inst->AnimationLock = Math.Max(0, _inst->AnimationLock - _cooldownAdjustment);
-
-                    var recastGroup = _inst->GetRecastGroup((int)actionType, actionId);
-                    if (recastGroup >= 0)
+                    var cm = CameraManager.Instance();
+                    var cam = cm != null ? cm->GetActiveCamera() : null;
+                    if (cam != null)
                     {
-                        var recast = _inst->GetRecastGroupDetail(recastGroup);
-                        if (recast != null)
-                            recast->Elapsed += _cooldownAdjustment;
+                        var localPlayer = Svc.Objects.LocalPlayer;
+                        if (localPlayer != null)
+                        {
+                            var dirH = cam->DirH;
+                            var gameObjRot = dirH > 0 ? dirH - MathF.PI : dirH + MathF.PI;
+                            ((GameObject*)localPlayer.Address)->SetRotation(gameObjRot);
+                        }
                     }
                 }
             }
 
-            return ret;
-        }
-
-        private void ActionEffectReceiveDetour(uint casterID, Character* casterObj, Vector3* targetPos,
-            ActionEffectHandler.Header* header, ActionEffectHandler.TargetEffects* effects, GameObjectId* targets)
-        {
-            var packetAnimLock = header->AnimationLock;
-            var prevAnimLock = _inst->AnimationLock;
-
-            _actionEffectHook!.Original(casterID, casterObj, targetPos, header, effects, targets);
-
-            var localPlayer = Player.Object;
-            if (localPlayer == null || casterID != localPlayer.EntityId || header->SourceSequence == 0)
-                return;
-
-            if (Cfg.RemoveAnimationLockDelay && _lastReqSequence == (int)header->SourceSequence && _lastReqInitialAnimLock > 0)
+            if (DismountCfg.Enabled && ShouldDismount(am, actionType, actionId, targetId))
             {
-                var delay = _lastReqInitialAnimLock - prevAnimLock;
-                var alpha = delay > DelayAverage ? (1 - DelaySmoothing) * 2.5f : (1 - DelaySmoothing) * 0.5f;
-                DelayAverage = delay * alpha + DelayAverage * (1 - alpha);
-
-                SanityCheck(packetAnimLock, header->AnimationLock, _inst->AnimationLock);
-
-                if (Cfg.RemoveAnimationLockDelay)
+                var dismounted = _useActionHook!.Original(am, ActionType.GeneralAction, 23, 0, 0, ActionManager.UseActionMode.None, 0, null);
+                if (dismounted)
                 {
-                    var basis = Cfg.UseSmoothedDelay ? DelayAverage : delay;
-                    var reduction = Math.Clamp(basis - DelayMax, 0, _inst->AnimationLock);
-                    _inst->AnimationLock -= reduction;
+                    _isMountActionQueued = true;
+                    _queuedMountAction = (actionType, actionId, targetId, extraParam, mode, comboRouteId);
+                    _mountActionTimer.Restart();
                 }
+                return dismounted;
             }
 
-            _lastReqInitialAnimLock = 0;
-            _lastReqSequence = -1;
+            return _useActionHook!.Original(am, actionType, actionId, targetId, extraParam, mode, comboRouteId, outOptAreaTargeted);
         }
 
-        private void SanityCheck(float packetOriginalAnimLock, float packetModifiedAnimLock, float gameCurrAnimLock)
+        private bool ShouldDismount(ActionManager* am, ActionType actionType, uint actionId, ulong targetId)
         {
-            if (!Cfg.RemoveAnimationLockDelay)
-                return;
-            if (packetOriginalAnimLock == packetModifiedAnimLock && packetOriginalAnimLock == gameCurrAnimLock
-                && packetOriginalAnimLock % 0.01 is <= 0.0005f or >= 0.0095f)
-                return;
+            if (!Svc.Condition[ConditionFlag.Mounted]) return false;
+            if (actionType == ActionType.Action && actionId is 5 or 6) return false; // Teleport, Return
+            if (actionType != ActionType.Action && actionType != ActionType.GeneralAction) return false;
+            if (actionType == ActionType.GeneralAction && actionId is not (3 or 4)) return false; // Only LB and Sprint
+            return am->GetActionStatus(actionType, actionId, targetId) != 0;
+        }
 
-            Svc.Log.Warning($"[ActionTweaks] Unexpected animation lock {packetOriginalAnimLock:f6} -> {packetModifiedAnimLock:f6} -> {gameCurrAnimLock:f6}, disabling anim lock tweak");
-            Helpers.PrintToshi("Unexpected animation lock detected! Disabling animation lock reduction. This may be caused by another plugin (XivAlexander, NoClippy).", 17);
-            Cfg.RemoveAnimationLockDelay = false;
+        private void OnUpdate(IFramework framework)
+        {
+            if (!_isMountActionQueued || Svc.Condition[ConditionFlag.Mounted]) return;
+
+            _isMountActionQueued = false;
+            _mountActionTimer.Stop();
+
+            if (_mountActionTimer.ElapsedMilliseconds > 2000) return;
+
+            var am = ActionManager.Instance();
+            if (am == null) return;
+            _useActionHook!.Original(am, _queuedMountAction.actionType, _queuedMountAction.actionId,
+                _queuedMountAction.targetId, _queuedMountAction.extraParam, _queuedMountAction.mode,
+                _queuedMountAction.comboRouteId, null);
+        }
+
+        private bool ShouldRotate(uint adjustedId)
+        {
+            var action = Svc.Data.GetExcelSheet<LuminaAction>()?.GetRowOrDefault(adjustedId);
+            if (action == null) return false;
+            if (!action.Value.AffectsPosition && adjustedId != 29494) return false;
+            if (!action.Value.CanTargetSelf) return false;
+            if (DashCfg.BlockBackwardDashes && action.Value.BehaviourType is 3 or 4) return false;
+            return action.Value.BehaviourType > 1;
         }
     }
 }

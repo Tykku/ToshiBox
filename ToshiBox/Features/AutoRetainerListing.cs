@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -22,7 +23,7 @@ using Callback = ECommons.Automation.Callback;
 
 namespace ToshiBox.Features;
 
-public partial class AutoRetainerListing
+public partial class AutoRetainerListing : IDisposable
 {
     private readonly Events _events;
     private readonly Config _config;
@@ -65,6 +66,8 @@ public partial class AutoRetainerListing
         _events.ListingsStart += OnListingsStart;
         _events.ListingsEnd += OnListingsEnd;
     }
+
+    public void Dispose() => Disable();
 
     public void Disable()
     {

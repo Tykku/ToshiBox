@@ -16,7 +16,7 @@ using ToshiBox.IPC;
 
 namespace ToshiBox.Features
 {
-    public unsafe class AutoChestOpen
+    public unsafe class AutoChestOpen : IDisposable
     {
         private readonly Config _config;
         private readonly TaskManager taskManager;
@@ -60,6 +60,8 @@ namespace ToshiBox.Features
             Svc.Framework.Update += RunFeature;
         }
 
+
+        public void Dispose() => Disable();
 
         public void Disable()
         {

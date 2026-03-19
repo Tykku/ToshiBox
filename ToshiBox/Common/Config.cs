@@ -9,7 +9,9 @@ namespace ToshiBox.Common
         public AutoRetainerListingConfig AutoRetainerListingConfig = new();
         public AutoChestOpenConfig AutoChestOpenConfig = new();
         public TurboHotbarsConfig TurboHotbarsConfig = new();
-        public ActionTweaksConfig ActionTweaksConfig = new();
+        public CameraRelativeDashesConfig CameraRelativeDashesConfig = new();
+        public AutoDismountConfig AutoDismountConfig = new();
+        public ActionTimingsConfig ActionTimingsConfig = new();
         public MarketInsightsConfig MarketInsightsConfig = new();
     }
 
@@ -53,7 +55,18 @@ namespace ToshiBox.Common
         public bool EnableOutOfCombat = false;
     }
 
-    public class ActionTweaksConfig
+    public class CameraRelativeDashesConfig
+    {
+        public bool Enabled = false;
+        public bool BlockBackwardDashes = false;
+    }
+
+    public class AutoDismountConfig
+    {
+        public bool Enabled = false;
+    }
+
+    public class ActionTimingsConfig
     {
         public bool RemoveAnimationLockDelay = false;
         public int AnimationLockDelayMax = 20;

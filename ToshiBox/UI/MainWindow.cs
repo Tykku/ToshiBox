@@ -31,7 +31,7 @@ namespace ToshiBox.UI
 
         private static readonly (string Group, FontAwesomeIcon GroupIcon, string[] Pages)[] Groups =
         {
-            ("Features", FontAwesomeIcon.Cogs,   new[] { "Auto Retainer Listing", "Auto Chest Open", "Turbo Hotbars", "Action Tweaks : WARNING: DO NOT USE WITH NOCLIPPY, BOSSMOD ACTION TWEAKS, OR XIVALEXANDER!" }),
+            ("Features", FontAwesomeIcon.Cogs,   new[] { "Auto Retainer Listing", "Auto Chest Open", "Action Tweaks", "Action Timings : WARNING: DO NOT USE WITH NOCLIPPY, BOSSMOD ACTION TWEAKS, OR XIVALEXANDER!" }),
             ("Tools",    FontAwesomeIcon.Wrench,  new[] { "Market Insights" }),
         };
 
@@ -39,8 +39,8 @@ namespace ToshiBox.UI
         {
             ["Auto Retainer Listing"] = FontAwesomeIcon.Tag,
             ["Auto Chest Open"]       = FontAwesomeIcon.BoxOpen,
-            ["Turbo Hotbars"]         = FontAwesomeIcon.Bolt,
-            ["Action Tweaks : WARNING: DO NOT USE WITH NOCLIPPY, BOSSMOD ACTION TWEAKS, OR XIVALEXANDER!"]         = FontAwesomeIcon.Gauge,
+            ["Action Tweaks"]         = FontAwesomeIcon.Gauge,
+            ["Action Timings : WARNING: DO NOT USE WITH NOCLIPPY, BOSSMOD ACTION TWEAKS, OR XIVALEXANDER!"] = FontAwesomeIcon.Bolt,
             ["Market Insights"]       = FontAwesomeIcon.ChartLine,
         };
 
