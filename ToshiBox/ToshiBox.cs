@@ -21,8 +21,8 @@ namespace ToshiBox
         public Config ConfigInstance;
         public AutoRetainerListing AutoRetainerListingInstance;
         public AutoChestOpen AutoChestOpenInstance;
-        public TurboHotbars TurboHotbarsInstance;
         public ActionTweaks ActionTweaksInstance;
+        public ActionTimings ActionTimingsInstance;
         public InsightsEngine? InsightsEngineInstance;
         public BestDealsEngine? BestDealsEngineInstance;
         private readonly IDalamudPluginInterface _pluginInterface;
@@ -41,11 +41,11 @@ namespace ToshiBox
             AutoChestOpenInstance = new AutoChestOpen(EventInstance, ConfigInstance);
             AutoChestOpenInstance.IsEnabled();
 
-            TurboHotbarsInstance = new TurboHotbars(ConfigInstance);
-            TurboHotbarsInstance.IsEnabled();
-
             ActionTweaksInstance = new ActionTweaks(ConfigInstance);
             ActionTweaksInstance.IsEnabled();
+
+            ActionTimingsInstance = new ActionTimings(ConfigInstance);
+            ActionTimingsInstance.IsEnabled();
 
             InsightsEngineInstance  = new InsightsEngine(ConfigInstance);
             BestDealsEngineInstance = new BestDealsEngine(ConfigInstance);
@@ -56,7 +56,7 @@ namespace ToshiBox
             {
                 new AutoRetainerListingUI(AutoRetainerListingInstance, ConfigInstance),
                 new AutoChestOpenUI(AutoChestOpenInstance, ConfigInstance),
-                new TurboHotbarsUI(TurboHotbarsInstance, ConfigInstance),
+                new ActionTimingsUI(ActionTimingsInstance, ConfigInstance),
                 new ActionTweaksUI(ActionTweaksInstance, ConfigInstance),
                 new MarketInsightsUI(InsightsEngineInstance, BestDealsEngineInstance, ConfigInstance),
             };
@@ -105,9 +105,10 @@ namespace ToshiBox
 
         public void Dispose()
         {
-            AutoRetainerListingInstance.Disable();
-            TurboHotbarsInstance.Disable();
+            AutoRetainerListingInstance.Dispose();
+            AutoChestOpenInstance.Dispose();
             ActionTweaksInstance.Dispose();
+            ActionTimingsInstance.Dispose();
             InsightsEngineInstance?.Dispose();
             BestDealsEngineInstance?.Dispose();
             PandoraIPC.Dispose();
