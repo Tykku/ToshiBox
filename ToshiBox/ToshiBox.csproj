@@ -33,7 +33,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="..\release\images\icon.png" Link="images\icon.png" CopyToOutputDirectory="PreserveNewest" Visible="false"/>
+        <Content Include="..\release\images\Icon.png" Link="images\Icon.png" CopyToOutputDirectory="PreserveNewest" Visible="false"/>
     </ItemGroup>
     
     <ItemGroup>
