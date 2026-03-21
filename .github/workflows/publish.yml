@@ -9,7 +9,7 @@ jobs:
   Build:
     permissions:
       contents: write
-    runs-on: ubuntu-latest
+    runs-on: codeberg-tiny
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
