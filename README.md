@@ -14,7 +14,7 @@ To install this plugin in XIVLauncher / Dalamud:
 4. Under **"Custom Plugin Repositories"**, add:
 
 ```
-https:tykku.com
+https://tykku.com
 ```
 
 5. Click **Save**, then search for **ToshiBox** in the Plugin Installer and install it.
