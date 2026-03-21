@@ -9,7 +9,7 @@ jobs:
   Build:
     permissions:
       contents: write
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -18,57 +18,59 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
-      - name: Get Environment Variables
-        run: |
-          $tag = "${{ github.ref }}" -replace 'refs/tags/', ''
-          "tag=$tag" | Out-File -Append -FilePath $Env:GITHUB_ENV
+      - name: Get Tag
+        run: echo "tag=${{ github.ref_name }}" >> $GITHUB_ENV
 
       - name: Set up .NET
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
 
       - name: Download Dalamud Latest
         run: |
-          Invoke-WebRequest -Uri https://goatcorp.github.io/dalamud-distrib/latest.zip -OutFile latest.zip
-          Expand-Archive -Force latest.zip "$env:AppData\XIVLauncher\addon\Hooks\dev"
+          wget -O /tmp/dalamud.zip https://goatcorp.github.io/dalamud-distrib/latest.zip
+          unzip -o /tmp/dalamud.zip -d /tmp/dalamud
 
       - name: Restore Nuget Packages
         run: dotnet restore ToshiBox/ToshiBox.csproj
 
       - name: Build Plugin
-        run: dotnet build --no-restore -c Release ToshiBox/ToshiBox.csproj -p:AssemblyVersion=${{ env.tag }} -p:FileVersion=${{ env.tag }} -p:PackageVersion=${{ env.tag }} -p:InformationalVersion=${{ env.tag }} --output .\build
+        run: dotnet build --no-restore -c Release ToshiBox/ToshiBox.csproj -p:AssemblyVersion=${{ env.tag }} -p:FileVersion=${{ env.tag }} -p:PackageVersion=${{ env.tag }} -p:InformationalVersion=${{ env.tag }} -p:DalamudLibPath=/tmp/dalamud/ --output ./build
 
       - name: Zip Plugin
-        run: Compress-Archive -Path .\build\* -DestinationPath .\build\ToshiBox.zip
+        run: cd ./build && zip ToshiBox.zip *
 
-      - name: Publish Plugin to GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: ./build/ToshiBox.zip
-          token: ${{ secrets.REPO_DEPLOY_TOKEN }}
+      - name: Publish Plugin to Codeberg Release
+        run: |
+          RESPONSE=$(curl -s -X POST "https://codeberg.org/api/v1/repos/Tykku/ToshiBox/releases" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"tag_name\":\"${{ env.tag }}\",\"name\":\"${{ env.tag }}\",\"body\":\"Auto-published version ${{ env.tag }}\"}")
+          RELEASE_ID=$(echo "$RESPONSE" | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
+          curl -s -X POST "https://codeberg.org/api/v1/repos/Tykku/ToshiBox/releases/${RELEASE_ID}/assets" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -F "attachment=@./build/ToshiBox.zip"
 
       - name: Create manifest.toml
         run: |
-          @"          
-          [plugin]          
-          internal_name = "ToshiBox"          
-          display_name = "ToshiBox"          
-          author = "Toshi"          
-          description = "My own playground for plugin dev"          
-          punchline = "Hello there"          
-          repo_url = "https://github.com/Tykku/ToshiBox"          
-          tags = ["ToshiBox"]          
-          icon_url = "https://tykku.github.io/ToshiBox/release/images/icon.png"          
-          assembly_version = "${{ env.tag }}"          
-          dalamud_api_level = 12          
-          download_link_install = "https://tykku.github.io/ToshiBox/release/ToshiBox.zip"          
-          changelog = "Auto-published version ${{ env.tag }}"          
-          "@ | Out-File -Encoding utf8 -FilePath .\release\manifest.toml
+          cat > ./release/manifest.toml << EOF
+          [plugin]
+          internal_name = "ToshiBox"
+          display_name = "ToshiBox"
+          author = "Toshi"
+          description = "My own playground for plugin dev"
+          punchline = "Hello there"
+          repo_url = "https://codeberg.org/Tykku/ToshiBox"
+          tags = ["ToshiBox"]
+          icon_url = "https://codeberg.org/Tykku/ToshiBox/raw/branch/main/release/images/icon.png"
+          assembly_version = "${{ env.tag }}"
+          dalamud_api_level = 12
+          download_link_install = "https://codeberg.org/Tykku/ToshiBox/raw/branch/main/release/ToshiBox.zip"
+          changelog = "Auto-published version ${{ env.tag }}"
+          EOF
 
       - name: Copy Built Files to Release Folder
-        run: |
-          Copy-Item .\build\ToshiBox.zip .\release\ToshiBox.zip -Force
+        run: cp ./build/ToshiBox.zip ./release/ToshiBox.zip
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -77,12 +79,12 @@ jobs:
 
       - name: Generate pluginmaster.json with Python script
         run: python generate_pluginmaster.py
-        working-directory: .
 
-      - name: Commit and Push to GitHub Pages branch
+      - name: Commit and Push to main
         run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
+          git config user.name "gitea-actions"
+          git config user.email "actions@codeberg.org"
+          git remote set-url origin https://Tykku:${{ secrets.GITHUB_TOKEN }}@codeberg.org/Tykku/ToshiBox.git
           git add release/ pluginmaster.json
           git commit -m "Update pluginmaster.json and release files for ${{ env.tag }}" || echo "No changes to commit"
           git push origin main

@@ -4,7 +4,7 @@ from os.path import getmtime
 from zipfile import ZipFile
 
 # Direct download URL for your repo structure (no /plugins/ subfolder)
-DOWNLOAD_URL = 'https://tykku.github.io/ToshiBox/release/{plugin_name}.zip'
+DOWNLOAD_URL = 'https://codeberg.org/Tykku/ToshiBox/raw/branch/main/release/{plugin_name}.zip'
 
 DEFAULTS = {
     'IsHide': False,
