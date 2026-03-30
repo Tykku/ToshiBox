@@ -59,6 +59,7 @@ namespace ToshiBox
                 new ActionTimingsUI(ActionTimingsInstance, ConfigInstance),
                 new ActionTweaksUI(ActionTweaksInstance, ConfigInstance),
                 new MarketInsightsUI(InsightsEngineInstance, BestDealsEngineInstance, ConfigInstance),
+                new KillerSudokuUI(),
             };
             _mainWindow = new MainWindow(features, ConfigInstance);
 
