@@ -41,15 +41,14 @@ jobs:
         run: cd ./build && zip ToshiBox.zip *
 
       - name: Publish Plugin to Codeberg Release
-        run: |
-          RESPONSE=$(curl -s -X POST "https://codeberg.org/api/v1/repos/Tykku/ToshiBox/releases" \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d "{\"tag_name\":\"${{ env.tag }}\",\"name\":\"${{ env.tag }}\",\"body\":\"Auto-published version ${{ env.tag }}\"}")
-          RELEASE_ID=$(echo "$RESPONSE" | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
-          curl -s -X POST "https://codeberg.org/api/v1/repos/Tykku/ToshiBox/releases/${RELEASE_ID}/assets" \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -F "attachment=@./build/ToshiBox.zip"
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.tag }}
+          name: ${{ env.tag }}
+          body: "Auto-published version ${{ env.tag }}"
+          files: ./build/ToshiBox.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create manifest.toml
         run: |
