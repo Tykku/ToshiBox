@@ -7,13 +7,13 @@
   "Tags": [
     "Toshibox"
   ],
-  "DalamudApiLevel": 14,
+  "DalamudApiLevel": 15,
   "LoadRequiredState": 0,
   "LoadSync": false,
   "CanUnloadAsync": false,
   "LoadPriority": 0,
   "IsTestingExclusive": false,
-  "IconUrl": "https://raw.githubusercontent.com/Tykku/ToshiBox/refs/heads/main/release/images/Icon.png",
+  "IconUrl": "https://codeberg.org/Tykku/ToshiBox/raw/branch/main/release/images/Icon.png",
   "Punchline": "Hello there",
   "AcceptsFeedback": true
 }
