@@ -28,7 +28,7 @@ jobs:
 
       - name: Download Dalamud Latest
         run: |
-          wget -O /tmp/dalamud.zip https://goatcorp.github.io/dalamud-distrib/latest.zip
+          wget -O /tmp/dalamud.zip https://github.com/goatcorp/dalamud-distrib/raw/main/api15/latest.zip
           unzip -o /tmp/dalamud.zip -d /tmp/dalamud
 
       - name: Restore Nuget Packages
@@ -71,13 +71,8 @@ jobs:
       - name: Copy Built Files to Release Folder
         run: cp ./build/ToshiBox.zip ./release/ToshiBox.zip
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
       - name: Generate pluginmaster.json with Python script
-        run: python generate_pluginmaster.py
+        run: python3 generate_pluginmaster.py
 
       - name: Commit and Push to main
         run: |
