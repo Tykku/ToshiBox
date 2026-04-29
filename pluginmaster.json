@@ -12,7 +12,7 @@
         "Tags": [
             "ToshiBox"
         ],
-        "DalamudApiLevel": 14,
+        "DalamudApiLevel": 15,
         "LoadPriority": 0,
         "IconUrl": "https://codeberg.org/Tykku/ToshiBox/raw/branch/main/release/images/Icon.png",
         "DownloadLinkInstall": "https://codeberg.org/Tykku/ToshiBox/raw/branch/main/release/ToshiBox.zip",
