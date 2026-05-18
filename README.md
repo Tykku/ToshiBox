@@ -1,5 +1,7 @@
 # ToshiBox 
 
+Toshibox is temporarily at codeberg. You can access the repo tykku.com
+
 ![Github Latest Releases](https://img.shields.io/github/downloads/Tykku/ToshiBox/latest/total.svg?style=for-the-badge)
 ![Github All Releases](https://img.shields.io/github/downloads/Tykku/ToshiBox/total.svg?style=for-the-badge)
 ![Github License](https://img.shields.io/github/license/Tykku/ToshiBox.svg?label=License&style=for-the-badge)
@@ -14,7 +16,7 @@ To install this plugin in XIVLauncher / Dalamud:
 4. Under **"Custom Plugin Repositories"**, add:
 
 ```
-https://tykku.github.io/ToshiBox/pluginmaster.json
+https://tykku.com
 ```
 
 5. Click **Save**, then search for **ToshiBox** in the Plugin Installer and install it.
