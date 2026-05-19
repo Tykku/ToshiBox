@@ -11,6 +11,7 @@ using ToshiBox.IPC;
 using ToshiBox.Insights;
 using ToshiBox.UI;
 using ToshiBox.UI.Features;
+using ToshiBox.WondrousTails;
 
 namespace ToshiBox
 {
@@ -25,6 +26,7 @@ namespace ToshiBox
         public ActionTimings ActionTimingsInstance;
         public InsightsEngine? InsightsEngineInstance;
         public BestDealsEngine? BestDealsEngineInstance;
+        public PerfectTails WondrousTailsSolverInstance;
         private readonly IDalamudPluginInterface _pluginInterface;
         public string Name => "ToshiBox";
 
@@ -49,6 +51,7 @@ namespace ToshiBox
 
             InsightsEngineInstance  = new InsightsEngine(ConfigInstance);
             BestDealsEngineInstance = new BestDealsEngine(ConfigInstance);
+            WondrousTailsSolverInstance = new PerfectTails();
 
             PandoraIPC.Init();
 
@@ -59,6 +62,7 @@ namespace ToshiBox
                 new ActionTimingsUI(ActionTimingsInstance, ConfigInstance),
                 new ActionTweaksUI(ActionTweaksInstance, ConfigInstance),
                 new MarketInsightsUI(InsightsEngineInstance, BestDealsEngineInstance, ConfigInstance),
+                new WondrousTailsUI(WondrousTailsSolverInstance),
                 new KillerSudokuUI(),
                 new DebugUI(),
             };
