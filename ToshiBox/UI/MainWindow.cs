@@ -34,6 +34,7 @@ namespace ToshiBox.UI
             ("Features", FontAwesomeIcon.Cogs,   new[] { "Auto Retainer Listing", "Auto Chest Open", "Action Tweaks", "Action Timings : WARNING: DO NOT USE WITH NOCLIPPY, BOSSMOD ACTION TWEAKS, OR XIVALEXANDER!" }),
             ("Tools",    FontAwesomeIcon.Wrench,  new[] { "Market Insights" }),
             ("Games",    FontAwesomeIcon.Gamepad, new[] { "Killer Sudoku" }),
+            ("Debug",    FontAwesomeIcon.Bug,     new[] { "Debug" }),
         };
 
         private static readonly Dictionary<string, FontAwesomeIcon> PageIcons = new()
@@ -44,6 +45,7 @@ namespace ToshiBox.UI
             ["Action Timings : WARNING: DO NOT USE WITH NOCLIPPY, BOSSMOD ACTION TWEAKS, OR XIVALEXANDER!"] = FontAwesomeIcon.Bolt,
             ["Market Insights"]       = FontAwesomeIcon.ChartLine,
             ["Killer Sudoku"]         = FontAwesomeIcon.BorderAll,
+            ["Debug"]                 = FontAwesomeIcon.Bug,
         };
 
         public MainWindow(IReadOnlyList<IFeatureUI> features, Config config)
