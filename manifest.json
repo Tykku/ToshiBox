@@ -13,7 +13,7 @@
   "CanUnloadAsync": false,
   "LoadPriority": 0,
   "IsTestingExclusive": false,
-  "IconUrl": "https://codeberg.org/Tykku/ToshiBox/raw/branch/main/release/images/Icon.png",
+  "IconUrl": "https://raw.githubusercontent.com/Tykku/ToshiBox/main/release/images/Icon.png",
   "Punchline": "Hello there",
   "AcceptsFeedback": true
 }

@@ -21,4 +21,4 @@ https://tykku.com
 
 ## 📜 Changelog
 
-See [Releases](https://codeberg.org/Tykku/ToshiBox/releases) for version history.
+See [Releases](https://github.com/Tykku/ToshiBox/releases) for version history.

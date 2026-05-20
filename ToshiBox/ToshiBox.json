@@ -5,9 +5,9 @@
   "DalamudApiLevel": 15,
   "Punchline": "Hello there",
   "Description": "My own playground for plugin dev",
-  "RepoUrl": "https://codeberg.org/Tykku/ToshiBox",
-  "IconURL": "https://codeberg.org/Tykku/ToshiBox/raw/branch/main/release/images/Icon.png",
-  "Changelog": "https://codeberg.org/Tykku/ToshiBox/releases",
+  "RepoUrl": "https://github.com/Tykku/ToshiBox",
+  "IconURL": "https://raw.githubusercontent.com/Tykku/ToshiBox/main/release/images/Icon.png",
+  "Changelog": "https://github.com/Tykku/ToshiBox/releases",
   "Tags": [
     "ToshiBox"
   ]

@@ -4,22 +4,22 @@
         "Name": "ToshiBox",
         "Punchline": "Hello there",
         "Description": "My own playground for plugin dev",
-        "Changelog": "https://codeberg.org/Tykku/ToshiBox/releases",
+        "Changelog": "https://github.com/Tykku/ToshiBox/releases",
         "InternalName": "ToshiBox",
         "AssemblyVersion": "7.5.0.7",
-        "RepoUrl": "https://codeberg.org/Tykku/ToshiBox",
+        "RepoUrl": "https://github.com/Tykku/ToshiBox",
         "ApplicableVersion": "any",
         "Tags": [
             "ToshiBox"
         ],
         "DalamudApiLevel": 15,
         "LoadPriority": 0,
-        "IconUrl": "https://codeberg.org/Tykku/ToshiBox/raw/branch/main/release/images/Icon.png",
-        "DownloadLinkInstall": "https://codeberg.org/Tykku/ToshiBox/raw/branch/main/release/ToshiBox.zip",
+        "IconUrl": "https://raw.githubusercontent.com/Tykku/ToshiBox/main/release/images/Icon.png",
+        "DownloadLinkInstall": "https://raw.githubusercontent.com/Tykku/ToshiBox/main/release/ToshiBox.zip",
         "IsHide": false,
         "IsTestingExclusive": false,
-        "DownloadLinkTesting": "https://codeberg.org/Tykku/ToshiBox/raw/branch/main/release/ToshiBox.zip",
-        "DownloadLinkUpdate": "https://codeberg.org/Tykku/ToshiBox/raw/branch/main/release/ToshiBox.zip",
+        "DownloadLinkTesting": "https://raw.githubusercontent.com/Tykku/ToshiBox/main/release/ToshiBox.zip",
+        "DownloadLinkUpdate": "https://raw.githubusercontent.com/Tykku/ToshiBox/main/release/ToshiBox.zip",
         "DownloadCount": 0,
         "LastUpdate": "1777567743"
     }

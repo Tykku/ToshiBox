@@ -9,7 +9,7 @@ jobs:
   Build:
     permissions:
       contents: write
-    runs-on: codeberg-tiny
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -40,8 +40,8 @@ jobs:
       - name: Zip Plugin
         run: cd ./build && zip ToshiBox.zip *
 
-      - name: Publish Plugin to Codeberg Release
-        uses: https://github.com/softprops/action-gh-release@v2
+      - name: Publish Plugin to GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.tag }}
           name: ${{ env.tag }}
@@ -59,12 +59,12 @@ jobs:
           author = "Toshi"
           description = "My own playground for plugin dev"
           punchline = "Hello there"
-          repo_url = "https://codeberg.org/Tykku/ToshiBox"
+          repo_url = "https://github.com/Tykku/ToshiBox"
           tags = ["ToshiBox"]
-          icon_url = "https://codeberg.org/Tykku/ToshiBox/raw/branch/main/release/images/icon.png"
+          icon_url = "https://raw.githubusercontent.com/Tykku/ToshiBox/main/release/images/icon.png"
           assembly_version = "${{ env.tag }}"
           dalamud_api_level = 12
-          download_link_install = "https://codeberg.org/Tykku/ToshiBox/raw/branch/main/release/ToshiBox.zip"
+          download_link_install = "https://raw.githubusercontent.com/Tykku/ToshiBox/main/release/ToshiBox.zip"
           changelog = "Auto-published version ${{ env.tag }}"
           EOF
 
@@ -76,9 +76,9 @@ jobs:
 
       - name: Commit and Push to main
         run: |
-          git config user.name "gitea-actions"
-          git config user.email "actions@codeberg.org"
-          git remote set-url origin https://Tykku:${{ secrets.GITHUB_TOKEN }}@codeberg.org/Tykku/ToshiBox.git
+          git config user.name "github-actions"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://github-actions:${{ secrets.GITHUB_TOKEN }}@github.com/Tykku/ToshiBox.git
           git add release/ pluginmaster.json
           git commit -m "Update pluginmaster.json and release files for ${{ env.tag }}" || echo "No changes to commit"
           git push origin main
