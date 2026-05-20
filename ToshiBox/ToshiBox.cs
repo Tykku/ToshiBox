@@ -18,6 +18,7 @@ namespace ToshiBox
     public class ToshiBox : IDalamudPlugin
     {
         private MainWindow _mainWindow;
+        private AnnouncementWindow _announcementWindow;
         public Events EventInstance;
         public Config ConfigInstance;
         public AutoRetainerListing AutoRetainerListingInstance;
@@ -67,8 +68,12 @@ namespace ToshiBox
                 new DebugUI(),
             };
             _mainWindow = new MainWindow(features, ConfigInstance);
+            _announcementWindow = new AnnouncementWindow(ConfigInstance);
+            if (!ConfigInstance.RepoMoveAnnouncementSeen)
+                _announcementWindow.IsOpen = true;
 
             _pluginInterface.UiBuilder.Draw += _mainWindow.Draw;
+            _pluginInterface.UiBuilder.Draw += _announcementWindow.Draw;
             _pluginInterface.UiBuilder.OpenConfigUi += OpenMainWindow;
             _pluginInterface.UiBuilder.OpenMainUi   += OpenMainWindow;
 
@@ -119,6 +124,7 @@ namespace ToshiBox
             BestDealsEngineInstance?.Dispose();
             PandoraIPC.Dispose();
 
+            _pluginInterface.UiBuilder.Draw          -= _announcementWindow.Draw;
             _pluginInterface.UiBuilder.Draw          -= _mainWindow.Draw;
             _pluginInterface.UiBuilder.OpenConfigUi  -= OpenMainWindow;
             _pluginInterface.UiBuilder.OpenMainUi    -= OpenMainWindow;
