@@ -6,6 +6,7 @@ namespace ToshiBox.Common
     public class Config
     {
         public Dictionary<string, bool> SidebarGroupExpanded = new();
+        public bool RepoMoveAnnouncementSeen = false;
         public AutoRetainerListingConfig AutoRetainerListingConfig = new();
         public AutoChestOpenConfig AutoChestOpenConfig = new();
         public TurboHotbarsConfig TurboHotbarsConfig = new();
