@@ -24,7 +24,7 @@ namespace ToshiBox
         public AutoRetainerListing AutoRetainerListingInstance;
         public AutoChestOpen AutoChestOpenInstance;
         public ActionTweaks ActionTweaksInstance;
-        public ActionTimings ActionTimingsInstance;
+        public NewActionTimings NewActionTimingsInstance;
         public InsightsEngine? InsightsEngineInstance;
         public BestDealsEngine? BestDealsEngineInstance;
         public PerfectTails WondrousTailsSolverInstance;
@@ -47,8 +47,9 @@ namespace ToshiBox
             ActionTweaksInstance = new ActionTweaks(ConfigInstance);
             ActionTweaksInstance.IsEnabled();
 
-            ActionTimingsInstance = new ActionTimings(ConfigInstance);
-            ActionTimingsInstance.IsEnabled();
+            NewActionTimingsInstance = new NewActionTimings(ConfigInstance);
+            NewActionTimingsInstance.IsEnabled();
+
 
             InsightsEngineInstance  = new InsightsEngine(ConfigInstance);
             BestDealsEngineInstance = new BestDealsEngine(ConfigInstance);
@@ -60,7 +61,7 @@ namespace ToshiBox
             {
                 new AutoRetainerListingUI(AutoRetainerListingInstance, ConfigInstance),
                 new AutoChestOpenUI(AutoChestOpenInstance, ConfigInstance),
-                new ActionTimingsUI(ActionTimingsInstance, ConfigInstance),
+                new ActionTimingsUI(NewActionTimingsInstance, ConfigInstance),
                 new ActionTweaksUI(ActionTweaksInstance, ConfigInstance),
                 new MarketInsightsUI(InsightsEngineInstance, BestDealsEngineInstance, ConfigInstance),
                 new WondrousTailsUI(WondrousTailsSolverInstance),
@@ -119,7 +120,7 @@ namespace ToshiBox
             AutoRetainerListingInstance.Dispose();
             AutoChestOpenInstance.Dispose();
             ActionTweaksInstance.Dispose();
-            ActionTimingsInstance.Dispose();
+            NewActionTimingsInstance.Dispose();
             InsightsEngineInstance?.Dispose();
             BestDealsEngineInstance?.Dispose();
             PandoraIPC.Dispose();
