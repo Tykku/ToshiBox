@@ -1,3 +1,4 @@
+/*
 using System;
 using Dalamud.Hooking;
 using ECommons.DalamudServices;
@@ -11,35 +12,34 @@ using ToshiBox.Common;
 
 namespace ToshiBox.Features
 {
-    public unsafe class ActionTimings : IDisposable
+    public unsafe class OldActionTimings : IDisposable
     {
         private readonly Config _config;
         private ActionTimingsConfig Cfg => _config.ActionTimingsConfig;
         private ActionManager* _inst => ActionManager.Instance();
 
-        // Animation lock tweak state
+        private const float CooldownDelayMax = 0.1f;
+
         private float _lastReqInitialAnimLock;
         private int _lastReqSequence = -1;
         private const float DelaySmoothing = 0.8f;
         public float DelayAverage { get; private set; } = 0.1f;
         private float DelayMax => Cfg.AnimationLockDelayMax * 0.001f;
 
-        // Cooldown delay tweak state
         private float _cooldownAdjustment;
 
-        // Hooks
         private Hook<ActionManager.Delegates.Update>? _updateHook;
         private Hook<ActionManager.Delegates.UseActionLocation>? _useActionLocationHook;
         private Hook<ActionEffectHandler.Delegates.Receive>? _actionEffectHook;
 
-        public ActionTimings(Config config)
+        public OldActionTimings(Config config)
         {
             _config = config;
         }
 
         public void IsEnabled()
         {
-            if (Cfg.RemoveAnimationLockDelay || Cfg.RemoveCooldownDelay)
+            if (Cfg.RemoveAnimationLockDelay)
                 Enable();
             else
                 Disable();
@@ -86,7 +86,7 @@ namespace ToshiBox.Features
         {
             var fwk = Framework.Instance();
             var dt = fwk->GameSpeedMultiplier * fwk->FrameDeltaTime;
-            _cooldownAdjustment = Cfg.RemoveCooldownDelay ? CalculateCooldownAdjustment(dt) : 0;
+            _cooldownAdjustment = CalculateCooldownAdjustment(dt);
 
             _updateHook!.Original(self);
 
@@ -113,8 +113,7 @@ namespace ToshiBox.Features
             if (maxDelay <= 0)
                 return 0;
 
-            var overflow = dt - maxDelay;
-            return Math.Clamp(overflow, 0, Cfg.CooldownDelayMax * 0.001f);
+            return Math.Clamp(dt - maxDelay, 0, CooldownDelayMax);
         }
 
         private bool UseActionLocationDetour(ActionManager* self, ActionType actionType, uint actionId, ulong targetId, Vector3* location, uint extraParam, byte a7)
@@ -195,3 +194,4 @@ namespace ToshiBox.Features
         }
     }
 }
+*/

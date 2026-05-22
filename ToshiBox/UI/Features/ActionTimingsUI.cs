@@ -1,5 +1,5 @@
+using System;
 using Dalamud.Bindings.ImGui;
-using Dalamud.Interface;
 using ECommons.Configuration;
 using ToshiBox.Common;
 using ToshiBox.Features;
@@ -8,10 +8,11 @@ namespace ToshiBox.UI.Features
 {
     public class ActionTimingsUI : IFeatureUI
     {
-        private readonly ActionTimings _feature;
+        private readonly NewActionTimings _feature;
         private readonly Config _config;
+        private NewActionTimingsConfig Cfg => _config.NewActionTimingsConfig;
 
-        public ActionTimingsUI(ActionTimings feature, Config config)
+        public ActionTimingsUI(NewActionTimings feature, Config config)
         {
             _feature = feature;
             _config = config;
@@ -25,54 +26,59 @@ namespace ToshiBox.UI.Features
 
         public void DrawSettings()
         {
-            bool animLock = _config.ActionTimingsConfig.RemoveAnimationLockDelay;
-            if (ImGui.Checkbox("Remove extra lag-induced animation lock delay from instant casts", ref animLock))
+            bool enabled = Cfg.Enabled;
+            if (ImGui.Checkbox("Enable animation lock + cooldown delay reduction", ref enabled))
             {
-                _config.ActionTimingsConfig.RemoveAnimationLockDelay = animLock;
+                Cfg.Enabled = enabled;
                 _feature.IsEnabled();
                 EzConfig.Save();
             }
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip("Do NOT use with XivAlexander or NoClippy.\nThis will automatically disable itself if a conflicting plugin is detected.");
+                ImGui.SetTooltip("Do NOT use with XivAlexander, NoClippy, or BossMod action tweaks.");
 
-            if (animLock)
+            if (enabled)
             {
-                ImGui.PushItemWidth(250f);
                 ImGui.Indent();
-                int delayMax = _config.ActionTimingsConfig.AnimationLockDelayMax;
-                if (ImGui.SliderInt("Max simulated delay (ms)", ref delayMax, 0, 50))
+                ImGui.PushItemWidth(250f);
+
+                bool usePct = Cfg.UsePercentageReduction;
+                if (ImGui.Checkbox("Use percentage reduction instead of RTT correction\nWarning: setting percent to 100 is basically cheating\nI am not responsible for being banned", ref usePct))
                 {
-                    _config.ActionTimingsConfig.AnimationLockDelayMax = delayMax;
+                    Cfg.UsePercentageReduction = usePct;
                     EzConfig.Save();
                 }
-                if (ImGui.IsItemHovered())
-                    ImGui.SetTooltip("Maximum simulated delay in ms.\n20ms enables triple-weaving.\nMinimum to prevent triple-weaving is 26ms.");
-                bool smoothed = _config.ActionTimingsConfig.UseSmoothedDelay;
-                if (ImGui.Checkbox("Use smoothed delay (enable with high jitter in ping)", ref smoothed))
+
+                if (usePct)
                 {
-                    _config.ActionTimingsConfig.UseSmoothedDelay = smoothed;
+                    float pct = Cfg.AnimationLockPercent;
+                    if (ImGui.SliderFloat("% Reduction", ref pct, 1f, 100f, "%.0f%%"))
+                    {
+                        Cfg.AnimationLockPercent = Math.Clamp(MathF.Round(pct), 1f, 100f);
+                        EzConfig.Save();
+                    }
+                }
+                else
+                {
+                    int simulatedRtt = Cfg.SimulatedRttMs;
+                    if (ImGui.SliderInt("Simulated RTT (ms)", ref simulatedRtt, 1, 50))
+                    {
+                        Cfg.SimulatedRttMs = Math.Clamp(simulatedRtt, 1, 50);
+                        EzConfig.Save();
+                    }
+                    if (ImGui.IsItemHovered())
+                        ImGui.SetTooltip("The minimum simulated ping floor in ms.\n1ms = near-maximum reduction.");
+                }
+
+                bool ignoreCast = Cfg.EnableIgnoreCasting;
+                if (ImGui.Checkbox("Allow cast & limit break animation lock to be reduced (try off first)", ref ignoreCast))
+                {
+                    Cfg.EnableIgnoreCasting = ignoreCast;
                     EzConfig.Save();
                 }
-                if (ImGui.IsItemHovered())
-                    ImGui.SetTooltip("Smooths delay over recent actions instead of reacting per-action.\nMore stable on unstable connections.");
-                ImGui.Unindent();
+
                 ImGui.PopItemWidth();
+                ImGui.Unindent();
             }
-
-            ImGui.Spacing();
-
-            bool cooldown = _config.ActionTimingsConfig.RemoveCooldownDelay;
-            if (ImGui.Checkbox("Remove extra framerate-induced cooldown delay", ref cooldown))
-            {
-                _config.ActionTimingsConfig.RemoveCooldownDelay = cooldown;
-                _feature.IsEnabled();
-                EzConfig.Save();
-            }
-            if (ImGui.IsItemHovered())
-                ImGui.SetTooltip("Adjusts cooldown and animation locks so queued actions resolve immediately,\nregardless of your current framerate.");
-
-            if (cooldown)
-                _config.ActionTimingsConfig.CooldownDelayMax = 100;
         }
     }
 }

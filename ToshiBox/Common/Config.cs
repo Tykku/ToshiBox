@@ -13,20 +13,20 @@ namespace ToshiBox.Common
         public CameraRelativeDashesConfig CameraRelativeDashesConfig = new();
         public AutoDismountConfig AutoDismountConfig = new();
         public ActionTimingsConfig ActionTimingsConfig = new();
+        public NewActionTimingsConfig NewActionTimingsConfig = new();
         public MarketInsightsConfig MarketInsightsConfig = new();
     }
 
     public class MarketInsightsConfig
     {
         public string DataCenter = "";
-        public int RefreshIntervalMinutes = 0; // 0 = manual only
+        public int RefreshIntervalMinutes = 0;
 
-        // Best Deals (Saddlebag Exchange)
         public string BestDealsHomeServer  = "";
-        public int    BestDealsDiscount    = 70;    // minimum discount % (70 = 30% off)
-        public int    BestDealsMinMedian   = 50000; // min median price on home server
-        public int    BestDealsMaxBuyPrice = 20000; // max gil to spend per item
-        public int    BestDealsMinSales    = 20;    // min sales in last 7 days
+        public int    BestDealsDiscount    = 70;
+        public int    BestDealsMinMedian   = 50000;
+        public int    BestDealsMaxBuyPrice = 20000;
+        public int    BestDealsMinSales    = 20;
     }
 
     public class AutoRetainerListingConfig
@@ -72,9 +72,15 @@ namespace ToshiBox.Common
         public bool RemoveAnimationLockDelay = false;
         public int AnimationLockDelayMax = 20;
         public bool UseSmoothedDelay = false;
-        public bool RemoveCooldownDelay = false;
-        public int CooldownDelayMax = 100;
     }
 
+    public class NewActionTimingsConfig
+    {
+        public bool Enabled = false;
+        public int SimulatedRttMs = 1;
+        public bool UsePercentageReduction = false;
+        public float AnimationLockPercent = 75f;
+        public bool EnableIgnoreCasting = false;
+        public Dictionary<uint, float> AnimationLockDatabase = new();
+    }
 }
-
