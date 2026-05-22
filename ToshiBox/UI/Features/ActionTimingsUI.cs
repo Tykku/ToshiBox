@@ -18,8 +18,8 @@ namespace ToshiBox.UI.Features
             _config = config;
         }
 
-        public string Name => "Action Timings : WARNING: DO NOT USE WITH NOCLIPPY, BOSSMOD ACTION TWEAKS, OR XIVALEXANDER!";
-        public string SidebarName => "Action Timings";
+        public string Name => "ToeClippy : WARNING: DO NOT USE WITH NOCLIPPY, BOSSMOD ACTION TWEAKS, OR XIVALEXANDER!";
+        public string SidebarName => "ToeClippy";
         public bool HasEnabledToggle => false;
         public bool Enabled { get => false; set { } }
         public bool Visible => true;
