@@ -80,7 +80,10 @@ namespace ToshiBox.Common
         public int SimulatedRttMs = 1;
         public bool UsePercentageReduction = false;
         public float AnimationLockPercent = 75f;
+        public bool UseFixedAnimationLock = false;
+        public int FixedAnimationLockMs = 600;
         public bool EnableIgnoreCasting = false;
+        public bool SteelToes = false;
         public Dictionary<uint, float> AnimationLockDatabase = new();
     }
 }
