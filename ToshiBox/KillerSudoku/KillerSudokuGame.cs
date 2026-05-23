@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace ToshiBox.KillerSudoku
 {
@@ -31,14 +30,10 @@ namespace ToshiBox.KillerSudoku
         public int SelectedCol             { get; set; } = -1;
         public bool IsComplete             { get; private set; }
         public int Mistakes                { get; private set; }
-        public TimeSpan Elapsed            => _timer.Elapsed;
-
-        private readonly Stopwatch _timer = new();
 
         public KillerSudokuGame()
         {
             Puzzle = KillerSudokuGenerator.Generate();
-            _timer.Start();
         }
 
         public void NewPuzzle()
@@ -51,7 +46,6 @@ namespace ToshiBox.KillerSudoku
             IsComplete  = false;
             NotesMode   = false;
             Mistakes    = 0;
-            _timer.Restart();
         }
 
         public void SetNumber(int row, int col, int number)
@@ -111,7 +105,6 @@ namespace ToshiBox.KillerSudoku
                     if (Board[r, c] != Puzzle.Solution[r, c]) return ValidationResult.Incomplete;
 
             IsComplete = true;
-            _timer.Stop();
             return ValidationResult.Correct;
         }
 
