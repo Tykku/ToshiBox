@@ -100,6 +100,13 @@ namespace ToshiBox
                 return;
             }
 
+            if (string.Equals(args, "dontstubyourtoes"))
+            {
+                ConfigInstance.NewActionTimingsConfig.SteelToes = !ConfigInstance.NewActionTimingsConfig.SteelToes;
+                EzConfig.Save();
+                return;
+            }
+
             if (string.Equals(args, "colors"))
             {
                 var ssb = new SeStringBuilder();

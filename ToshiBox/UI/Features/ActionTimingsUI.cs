@@ -6,7 +6,7 @@ using ToshiBox.Features;
 
 namespace ToshiBox.UI.Features
 {
-    public class ActionTimingsUI : IFeatureUI
+public class ActionTimingsUI : IFeatureUI
     {
         private readonly NewActionTimings _feature;
         private readonly Config _config;
@@ -41,19 +41,41 @@ namespace ToshiBox.UI.Features
                 ImGui.Indent();
                 ImGui.PushItemWidth(250f);
 
+                bool useFixed = Cfg.UseFixedAnimationLock;
                 bool usePct = Cfg.UsePercentageReduction;
-                if (ImGui.Checkbox("Use percentage reduction instead of RTT correction\nWarning: setting percent to 100 is basically cheating\nI am not responsible for being banned", ref usePct))
+
+                if (Cfg.SteelToes)
+                {
+                    if (ImGui.Checkbox("Use fixed animation lock\nI wouldn't recommend below 150\nWarning: setting fixed too low is basically cheating\nI am not responsible for being banned", ref useFixed))
+                    {
+                        Cfg.UseFixedAnimationLock = useFixed;
+                        if (useFixed) Cfg.UsePercentageReduction = false;
+                        EzConfig.Save();
+                    }
+                }
+
+                if (ImGui.Checkbox("Use percentage reduction instead of RTT correction\nI wouldn't recommend above 75%\nWarning: setting this too high is basically cheating\nI am not responsible for being banned", ref usePct))
                 {
                     Cfg.UsePercentageReduction = usePct;
+                    if (usePct) Cfg.UseFixedAnimationLock = false;
                     EzConfig.Save();
                 }
 
-                if (usePct)
+                if (useFixed)
+                {
+                    int fixedMs = Cfg.FixedAnimationLockMs;
+                    if (ImGui.SliderInt("Fixed lock (ms)", ref fixedMs, 30, 600))
+                    {
+                        Cfg.FixedAnimationLockMs = Math.Clamp(fixedMs, 30, 600);
+                        EzConfig.Save();
+                    }
+                }
+                else if (usePct)
                 {
                     float pct = Cfg.AnimationLockPercent;
-                    if (ImGui.SliderFloat("% Reduction", ref pct, 1f, 100f, "%.0f%%"))
+                    if (ImGui.SliderFloat("% Reduction", ref pct, 1f, 95f, "%.0f%%"))
                     {
-                        Cfg.AnimationLockPercent = Math.Clamp(MathF.Round(pct), 1f, 100f);
+                        Cfg.AnimationLockPercent = Math.Clamp(MathF.Round(pct), 1f, 95f);
                         EzConfig.Save();
                     }
                 }
