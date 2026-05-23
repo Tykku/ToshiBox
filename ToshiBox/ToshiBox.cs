@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Dalamud.Game.Command;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin;
@@ -28,6 +28,7 @@ namespace ToshiBox
         public InsightsEngine? InsightsEngineInstance;
         public BestDealsEngine? BestDealsEngineInstance;
         public PerfectTails WondrousTailsSolverInstance;
+        public AntiAfkKick AntiAfkKickInstance;
         private readonly IDalamudPluginInterface _pluginInterface;
         public string Name => "ToshiBox";
 
@@ -50,10 +51,11 @@ namespace ToshiBox
             NewActionTimingsInstance = new NewActionTimings(ConfigInstance);
             NewActionTimingsInstance.IsEnabled();
 
-
             InsightsEngineInstance  = new InsightsEngine(ConfigInstance);
             BestDealsEngineInstance = new BestDealsEngine(ConfigInstance);
             WondrousTailsSolverInstance = new PerfectTails();
+
+            AntiAfkKickInstance = new AntiAfkKick(ConfigInstance);
 
             PandoraIPC.Init();
 
@@ -66,6 +68,7 @@ namespace ToshiBox
                 new MarketInsightsUI(InsightsEngineInstance, BestDealsEngineInstance, ConfigInstance),
                 new WondrousTailsUI(WondrousTailsSolverInstance),
                 new KillerSudokuUI(),
+                new AntiAfkKickUI(AntiAfkKickInstance, ConfigInstance),
                 new DebugUI(),
             };
             _mainWindow = new MainWindow(features, ConfigInstance);

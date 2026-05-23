@@ -15,6 +15,7 @@ namespace ToshiBox.Common
         public ActionTimingsConfig ActionTimingsConfig = new();
         public NewActionTimingsConfig NewActionTimingsConfig = new();
         public MarketInsightsConfig MarketInsightsConfig = new();
+        public AntiAfkConfig AntiAfkConfig = new();
     }
 
     public class MarketInsightsConfig
@@ -82,5 +83,12 @@ namespace ToshiBox.Common
         public float AnimationLockPercent = 75f;
         public bool EnableIgnoreCasting = false;
         public Dictionary<uint, float> AnimationLockDatabase = new();
+    }
+
+    public class AntiAfkConfig
+    {
+        public bool Enabled = true;
+        public int CheckInterval = 10;
+        public int MaxIdle = 30;
     }
 }
