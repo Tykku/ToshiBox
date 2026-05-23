@@ -46,7 +46,7 @@ public class ActionTimingsUI : IFeatureUI
 
                 if (Cfg.SteelToes)
                 {
-                    if (ImGui.Checkbox("Use fixed animation lock\nI wouldn't recommend below 150\nWarning: setting fixed too low is basically cheating\nI am not responsible for being banned", ref useFixed))
+                    if (ImGui.Checkbox("Use fixed animation lock\nI wouldn't recommend below 150\nWarning: setting this too low is basically cheating\nI am not responsible for being banned", ref useFixed))
                     {
                         Cfg.UseFixedAnimationLock = useFixed;
                         if (useFixed) Cfg.UsePercentageReduction = false;
