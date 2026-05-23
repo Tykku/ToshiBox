@@ -79,10 +79,6 @@ namespace ToshiBox.UI.Features
 
         private void DrawControls()
         {
-            var elapsed = _game.Elapsed;
-            ImGui.Text($"Time: {(int)elapsed.TotalMinutes:D2}:{elapsed.Seconds:D2}");
-
-            ImGui.SameLine(0, 16f);
             ImGui.TextColored(_game.Mistakes == 0 ? Theme.TextMuted : Theme.Error,
                 $"Mistakes: {_game.Mistakes}");
 
