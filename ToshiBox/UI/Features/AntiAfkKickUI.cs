@@ -51,7 +51,7 @@ namespace ToshiBox.UI.Features
             }
             ImGui.PopItemWidth();
 
-            ImGui.TextDisabled("Sends a silent LCtrl keypress to reset the AFK timer when it exceeds the threshold.");
+            ImGui.TextDisabled("There should be no real reason to set this to anything other than 30 seconds.\nSends a silent LCtrl keypress to reset the AFK timer when it exceeds the threshold.");
 
 #if DEBUG
             ImGui.Spacing();
