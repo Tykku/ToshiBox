@@ -11,6 +11,8 @@ namespace ToshiBox.UI
     {
         string Name { get; }
         string SidebarName => Name;
+        string Group { get; }
+        FontAwesomeIcon Icon { get; }
         bool Enabled { get; set; }
         bool Visible { get; }
         bool HasEnabledToggle => true;
@@ -21,6 +23,8 @@ namespace ToshiBox.UI
     {
         private readonly IReadOnlyList<IFeatureUI> _features;
         private readonly Dictionary<string, IFeatureUI> _featuresByName;
+        private readonly List<string> _groups;
+        private readonly Dictionary<string, List<IFeatureUI>> _featuresByGroup;
         private readonly Config _config;
 
         private string _selectedPage = string.Empty;
@@ -29,25 +33,12 @@ namespace ToshiBox.UI
 
         private const float SidebarWidth = 200f;
 
-        private static readonly (string Group, FontAwesomeIcon GroupIcon, string[] Pages)[] Groups =
+        private static readonly Dictionary<string, FontAwesomeIcon> GroupIcons = new()
         {
-            ("Features", FontAwesomeIcon.Cogs,   new[] { "Anti-AFK Kick", "Auto Retainer Listing", "Auto Chest Open", "Action Tweaks", "ToeClippy : WARNING: DO NOT USE WITH NOCLIPPY, BOSSMOD ACTION TWEAKS, OR XIVALEXANDER!" }),
-            ("Tools",    FontAwesomeIcon.Wrench,  new[] { "Market Insights", "Wondrous Tails" }),
-            ("Games",    FontAwesomeIcon.Gamepad, new[] { "Killer Sudoku" }),
-            ("Debug",    FontAwesomeIcon.Bug,     new[] { "Debug" }),
-        };
-
-        private static readonly Dictionary<string, FontAwesomeIcon> PageIcons = new()
-        {
-            ["Anti-AFK Kick"]         = FontAwesomeIcon.Clock,
-            ["Auto Retainer Listing"] = FontAwesomeIcon.Tag,
-            ["Auto Chest Open"]       = FontAwesomeIcon.BoxOpen,
-            ["Action Tweaks"]         = FontAwesomeIcon.Gauge,
-            ["ToeClippy : WARNING: DO NOT USE WITH NOCLIPPY, BOSSMOD ACTION TWEAKS, OR XIVALEXANDER!"] = FontAwesomeIcon.Paw,
-            ["Market Insights"]       = FontAwesomeIcon.ChartLine,
-            ["Wondrous Tails"]        = FontAwesomeIcon.Star,
-            ["Killer Sudoku"]         = FontAwesomeIcon.BorderAll,
-            ["Debug"]                 = FontAwesomeIcon.Bug,
+            ["Features"] = FontAwesomeIcon.Cogs,
+            ["Tools"]    = FontAwesomeIcon.Wrench,
+            ["Games"]    = FontAwesomeIcon.Gamepad,
+            ["Debug"]    = FontAwesomeIcon.Bug,
         };
 
         public MainWindow(IReadOnlyList<IFeatureUI> features, Config config)
@@ -55,9 +46,20 @@ namespace ToshiBox.UI
             _features = features;
             _config   = config;
 
-            _featuresByName = new Dictionary<string, IFeatureUI>();
+            _featuresByName  = new Dictionary<string, IFeatureUI>();
+            _groups          = new List<string>();
+            _featuresByGroup = new Dictionary<string, List<IFeatureUI>>();
+
             foreach (var f in features)
+            {
                 _featuresByName[f.Name] = f;
+                if (!_featuresByGroup.ContainsKey(f.Group))
+                {
+                    _groups.Add(f.Group);
+                    _featuresByGroup[f.Group] = new List<IFeatureUI>();
+                }
+                _featuresByGroup[f.Group].Add(f);
+            }
         }
 
         public void Draw()
@@ -97,30 +99,26 @@ namespace ToshiBox.UI
 
             if (ImGui.BeginChild("TBSidebar", new Vector2(SidebarWidth, -1), true))
             {
-                // Ensure selected page is still visible; clear if not
                 if (!string.IsNullOrEmpty(_selectedPage) &&
                     _featuresByName.TryGetValue(_selectedPage, out var sel) && !sel.Visible)
                     _selectedPage = string.Empty;
 
-                foreach (var (group, groupIcon, pages) in Groups)
+                foreach (var group in _groups)
                 {
                     if (!_config.SidebarGroupExpanded.ContainsKey(group))
                         _config.SidebarGroupExpanded[group] = true;
 
-                    var expanded = _config.SidebarGroupExpanded[group];
+                    var expanded  = _config.SidebarGroupExpanded[group];
+                    var groupIcon = GroupIcons.GetValueOrDefault(group, (FontAwesomeIcon)0);
+
                     if (Theme.SidebarGroupHeader(group, ref expanded, groupIcon))
                     {
                         ImGui.Spacing();
-                        foreach (var page in pages)
+                        foreach (var feature in _featuresByGroup[group])
                         {
-                            // Skip if the feature isn't visible (e.g. AutoRetainerListing when disabled)
-                            if (_featuresByName.TryGetValue(page, out var feature) && !feature.Visible)
-                                continue;
-
-                            var icon = PageIcons.GetValueOrDefault(page, (FontAwesomeIcon)0);
-                            var label = feature?.SidebarName ?? page;
-                            if (Theme.SidebarItem(label, _selectedPage == page, icon))
-                                _selectedPage = page;
+                            if (!feature.Visible) continue;
+                            if (Theme.SidebarItem(feature.SidebarName, _selectedPage == feature.Name, feature.Icon))
+                                _selectedPage = feature.Name;
                         }
                         ImGui.Spacing();
                     }
@@ -153,13 +151,11 @@ namespace ToshiBox.UI
             if (!_featuresByName.TryGetValue(_selectedPage, out var feature))
                 return;
 
-            // Page header
             Theme.SectionHeader(_selectedPage);
             ImGui.Spacing();
             ImGui.Separator();
             ImGui.Spacing();
 
-            // Enable toggle (above settings) — skipped for features that don't need it
             if (feature.HasEnabledToggle)
             {
                 var enabled = feature.Enabled;
@@ -171,7 +167,6 @@ namespace ToshiBox.UI
                 ImGui.Spacing();
             }
 
-            // Feature settings
             Theme.PushFrameStyle();
             feature.DrawSettings();
             Theme.PopFrameStyle();

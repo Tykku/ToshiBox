@@ -18,6 +18,8 @@ namespace ToshiBox.UI.Features
     public unsafe class DebugUI : IFeatureUI
     {
         public string Name           => "Debug";
+        public string Group          => "Debug";
+        public Dalamud.Interface.FontAwesomeIcon Icon => Dalamud.Interface.FontAwesomeIcon.Bug;
         public bool Enabled          { get => true; set { } }
         public bool Visible          => true;
         public bool HasEnabledToggle => false;

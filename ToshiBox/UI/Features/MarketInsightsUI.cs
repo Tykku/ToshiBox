@@ -67,6 +67,8 @@ namespace ToshiBox.UI.Features
         }
 
         public string Name            => "Market Insights";
+        public string Group           => "Tools";
+        public Dalamud.Interface.FontAwesomeIcon Icon => Dalamud.Interface.FontAwesomeIcon.ChartLine;
         public bool   Visible         => true;
         public bool   HasEnabledToggle => false;
         public bool   Enabled          { get => true; set { } }

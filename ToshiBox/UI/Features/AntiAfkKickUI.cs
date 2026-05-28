@@ -1,5 +1,6 @@
 using Dalamud.Bindings.ImGui;
 using ECommons.Configuration;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using ToshiBox.Common;
 using ToshiBox.Features;
 
@@ -17,6 +18,8 @@ namespace ToshiBox.UI.Features
         }
 
         public string Name => "Anti-AFK Kick";
+        public string Group => "Features";
+        public Dalamud.Interface.FontAwesomeIcon Icon => Dalamud.Interface.FontAwesomeIcon.Clock;
 
         public bool Enabled
         {
@@ -49,6 +52,20 @@ namespace ToshiBox.UI.Features
             ImGui.PopItemWidth();
 
             ImGui.TextDisabled("Sends a silent LCtrl keypress to reset the AFK timer when it exceeds the threshold.");
+
+#if DEBUG
+            ImGui.Spacing();
+            ImGui.Separator();
+            ImGui.Spacing();
+
+            unsafe
+            {
+                var t = UIModule.Instance()->GetInputTimerModule();
+                ImGui.Text($"AfkTimer:          {t->AfkTimer:F1}s");
+                ImGui.Text($"ContentInputTimer: {t->ContentInputTimer:F1}s");
+                ImGui.Text($"InputTimer:        {t->InputTimer:F1}s");
+            }
+#endif
         }
     }
 }

@@ -19,6 +19,8 @@ namespace ToshiBox.UI.Features
         }
 
         public string Name => "Auto Chest Open";
+        public string Group => "Features";
+        public Dalamud.Interface.FontAwesomeIcon Icon => Dalamud.Interface.FontAwesomeIcon.BoxOpen;
 
         public bool Enabled
         {
