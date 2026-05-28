@@ -18,6 +18,8 @@ namespace ToshiBox.UI.Features
         }
 
         public string Name => "Action Tweaks";
+        public string Group => "Features";
+        public Dalamud.Interface.FontAwesomeIcon Icon => Dalamud.Interface.FontAwesomeIcon.Gauge;
         public bool HasEnabledToggle => false;
         public bool Enabled { get => false; set { } }
         public bool Visible => true;
@@ -110,6 +112,7 @@ namespace ToshiBox.UI.Features
                 _feature.IsEnabled();
                 EzConfig.Save();
             }
+
         }
     }
 }

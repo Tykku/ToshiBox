@@ -19,6 +19,8 @@ namespace ToshiBox.UI.Features
         }
 
         public string Name => "Auto Retainer Listing";
+        public string Group => "Features";
+        public Dalamud.Interface.FontAwesomeIcon Icon => Dalamud.Interface.FontAwesomeIcon.Tag;
         public bool Visible => _feature.ShowInList;
 
         public bool Enabled

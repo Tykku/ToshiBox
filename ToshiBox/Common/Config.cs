@@ -15,6 +15,13 @@ namespace ToshiBox.Common
         public ActionTimingsConfig ActionTimingsConfig = new();
         public NewActionTimingsConfig NewActionTimingsConfig = new();
         public MarketInsightsConfig MarketInsightsConfig = new();
+        public AntiAfkKickConfig AntiAfkKickConfig = new();
+    }
+
+    public class AntiAfkKickConfig
+    {
+        public bool Enabled = false;
+        public int TimerLimit = 30;
     }
 
     public class MarketInsightsConfig

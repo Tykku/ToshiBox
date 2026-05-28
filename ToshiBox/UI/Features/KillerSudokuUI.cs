@@ -9,6 +9,8 @@ namespace ToshiBox.UI.Features
         private readonly KillerSudokuGame _game = new();
 
         public string Name            => "Killer Sudoku";
+        public string Group           => "Games";
+        public Dalamud.Interface.FontAwesomeIcon Icon => Dalamud.Interface.FontAwesomeIcon.BorderAll;
         public bool Enabled           { get => true; set { } }
         public bool Visible           => true;
         public bool HasEnabledToggle  => false;

@@ -12,6 +12,8 @@ namespace ToshiBox.UI.Features
         private readonly PerfectTails _solver;
 
         public string Name           => "Wondrous Tails";
+        public string Group          => "Tools";
+        public Dalamud.Interface.FontAwesomeIcon Icon => Dalamud.Interface.FontAwesomeIcon.Star;
         public bool Enabled          { get => true; set { } }
         public bool Visible          => true;
         public bool HasEnabledToggle => false;

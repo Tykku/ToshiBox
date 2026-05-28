@@ -19,6 +19,8 @@ public class ActionTimingsUI : IFeatureUI
         }
 
         public string Name => "ToeClippy : WARNING: DO NOT USE WITH NOCLIPPY, BOSSMOD ACTION TWEAKS, OR XIVALEXANDER!";
+        public string Group => "Features";
+        public Dalamud.Interface.FontAwesomeIcon Icon => Dalamud.Interface.FontAwesomeIcon.Paw;
         public string SidebarName => "ToeClippy";
         public bool HasEnabledToggle => false;
         public bool Enabled { get => false; set { } }
