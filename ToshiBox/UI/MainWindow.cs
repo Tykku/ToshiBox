@@ -31,7 +31,7 @@ namespace ToshiBox.UI
 
         private static readonly (string Group, FontAwesomeIcon GroupIcon, string[] Pages)[] Groups =
         {
-            ("Features", FontAwesomeIcon.Cogs,   new[] { "Auto Retainer Listing", "Auto Chest Open", "Action Tweaks", "ToeClippy : WARNING: DO NOT USE WITH NOCLIPPY, BOSSMOD ACTION TWEAKS, OR XIVALEXANDER!" }),
+            ("Features", FontAwesomeIcon.Cogs,   new[] { "Anti-AFK Kick", "Auto Retainer Listing", "Auto Chest Open", "Action Tweaks", "ToeClippy : WARNING: DO NOT USE WITH NOCLIPPY, BOSSMOD ACTION TWEAKS, OR XIVALEXANDER!" }),
             ("Tools",    FontAwesomeIcon.Wrench,  new[] { "Market Insights", "Wondrous Tails" }),
             ("Games",    FontAwesomeIcon.Gamepad, new[] { "Killer Sudoku" }),
             ("Debug",    FontAwesomeIcon.Bug,     new[] { "Debug" }),
@@ -39,6 +39,7 @@ namespace ToshiBox.UI
 
         private static readonly Dictionary<string, FontAwesomeIcon> PageIcons = new()
         {
+            ["Anti-AFK Kick"]         = FontAwesomeIcon.Clock,
             ["Auto Retainer Listing"] = FontAwesomeIcon.Tag,
             ["Auto Chest Open"]       = FontAwesomeIcon.BoxOpen,
             ["Action Tweaks"]         = FontAwesomeIcon.Gauge,

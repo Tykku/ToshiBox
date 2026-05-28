@@ -27,6 +27,7 @@ namespace ToshiBox
         public NewActionTimings NewActionTimingsInstance;
         public InsightsEngine? InsightsEngineInstance;
         public BestDealsEngine? BestDealsEngineInstance;
+        public AntiAfkKick AntiAfkKickInstance;
         public PerfectTails WondrousTailsSolverInstance;
         private readonly IDalamudPluginInterface _pluginInterface;
         public string Name => "ToshiBox";
@@ -50,6 +51,8 @@ namespace ToshiBox
             NewActionTimingsInstance = new NewActionTimings(ConfigInstance);
             NewActionTimingsInstance.IsEnabled();
 
+            AntiAfkKickInstance = new AntiAfkKick(ConfigInstance);
+            AntiAfkKickInstance.IsEnabled();
 
             InsightsEngineInstance  = new InsightsEngine(ConfigInstance);
             BestDealsEngineInstance = new BestDealsEngine(ConfigInstance);
@@ -59,6 +62,7 @@ namespace ToshiBox
 
             var features = new List<IFeatureUI>
             {
+                new AntiAfkKickUI(AntiAfkKickInstance, ConfigInstance),
                 new AutoRetainerListingUI(AutoRetainerListingInstance, ConfigInstance),
                 new AutoChestOpenUI(AutoChestOpenInstance, ConfigInstance),
                 new ActionTimingsUI(NewActionTimingsInstance, ConfigInstance),
@@ -124,6 +128,7 @@ namespace ToshiBox
 
         public void Dispose()
         {
+            AntiAfkKickInstance.Dispose();
             AutoRetainerListingInstance.Dispose();
             AutoChestOpenInstance.Dispose();
             ActionTweaksInstance.Dispose();
