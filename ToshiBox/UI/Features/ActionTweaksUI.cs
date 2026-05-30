@@ -91,10 +91,21 @@ namespace ToshiBox.UI.Features
                 if (ImGui.Checkbox("Block Backward Dashes", ref blockBackward))
                 {
                     _config.CameraRelativeDashesConfig.BlockBackwardDashes = blockBackward;
+                    if (blockBackward) _config.CameraRelativeDashesConfig.ForwardBackwardDashes = false;
                     EzConfig.Save();
                 }
                 if (ImGui.IsItemHovered())
                     ImGui.SetTooltip("Disables camera-relative behavior for backward dashes like Elusive Jump.");
+
+                bool forwardBackward = _config.CameraRelativeDashesConfig.ForwardBackwardDashes;
+                if (ImGui.Checkbox("Forward Backward Dashes", ref forwardBackward))
+                {
+                    _config.CameraRelativeDashesConfig.ForwardBackwardDashes = forwardBackward;
+                    if (forwardBackward) _config.CameraRelativeDashesConfig.BlockBackwardDashes = false;
+                    EzConfig.Save();
+                }
+                if (ImGui.IsItemHovered())
+                    ImGui.SetTooltip("Makes backward dashes like Elusive Jump travel forward relative to the camera.");
                 ImGui.Unindent();
             }
 

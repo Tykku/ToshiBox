@@ -67,6 +67,7 @@ namespace ToshiBox.Common
     {
         public bool Enabled = false;
         public bool BlockBackwardDashes = false;
+        public bool ForwardBackwardDashes = false;
     }
 
     public class AutoDismountConfig
@@ -86,9 +87,9 @@ namespace ToshiBox.Common
         public bool Enabled = false;
         public int SimulatedRttMs = 1;
         public bool UsePercentageReduction = false;
-        public float AnimationLockPercent = 75f;
+        public float AnimationLockPercent = 60f;
         public bool UseFixedAnimationLock = false;
-        public int FixedAnimationLockMs = 600;
+        public int FixedAnimationLockMs = 240;
         public bool EnableIgnoreCasting = false;
         public bool SteelToes = false;
         public Dictionary<uint, float> AnimationLockDatabase = new();

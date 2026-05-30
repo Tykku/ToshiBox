@@ -181,7 +181,17 @@ namespace ToshiBox.Features
                         if (localPlayer != null)
                         {
                             var dirH = cam->DirH;
-                            var gameObjRot = dirH > 0 ? dirH - MathF.PI : dirH + MathF.PI;
+                            var isFlipped = *(byte*)((nint)cam + 0x1F4);
+                            var isHRotationOffset = (int)cam->ZoomMode == isFlipped;
+                            var gameObjRot = !isHRotationOffset
+                                ? (dirH > 0 ? dirH - MathF.PI : dirH + MathF.PI)
+                                : dirH;
+                            if (DashCfg.ForwardBackwardDashes)
+                            {
+                                var action = Svc.Data.GetExcelSheet<LuminaAction>()?.GetRowOrDefault(adjustedId);
+                                if (action?.BehaviourType is 3 or 4)
+                                    gameObjRot = gameObjRot > 0 ? gameObjRot - MathF.PI : gameObjRot + MathF.PI;
+                            }
                             ((GameObject*)localPlayer.Address)->SetRotation(gameObjRot);
                         }
                     }
@@ -206,9 +216,18 @@ namespace ToshiBox.Features
         private bool ShouldDismount(ActionManager* am, ActionType actionType, uint actionId, ulong targetId)
         {
             if (!Svc.Condition[ConditionFlag.Mounted]) return false;
-            if (actionType == ActionType.Action && actionId is 5 or 6) return false; // Teleport, Return
-            if (actionType != ActionType.Action && actionType != ActionType.GeneralAction) return false;
-            if (actionType == ActionType.GeneralAction && actionId is not (3 or 4)) return false; // Only LB and Sprint
+            if (actionType == ActionType.Action)
+            {
+                if (actionId is 5 or 6) return false; // Teleport, Return
+                var adjustedId = am->GetAdjustedActionId(actionId);
+                var action = Svc.Data.GetExcelSheet<LuminaAction>()?.GetRowOrDefault(adjustedId);
+                if (action?.ActionCategory.RowId == 12) return false; // Mount action
+            }
+            else if (actionType == ActionType.GeneralAction)
+            {
+                if (actionId is not (3 or 4)) return false; // Only LB and Sprint
+            }
+            else return false;
             return am->GetActionStatus(actionType, actionId, targetId) != 0;
         }
 
@@ -234,7 +253,7 @@ namespace ToshiBox.Features
             if (action == null) return false;
             if (!action.Value.AffectsPosition && adjustedId != 29494) return false;
             if (!action.Value.CanTargetSelf) return false;
-            if (DashCfg.BlockBackwardDashes && action.Value.BehaviourType is 3 or 4) return false;
+            if (DashCfg.BlockBackwardDashes && !DashCfg.ForwardBackwardDashes && action.Value.BehaviourType is 3 or 4) return false;
             return action.Value.BehaviourType > 1;
         }
     }
