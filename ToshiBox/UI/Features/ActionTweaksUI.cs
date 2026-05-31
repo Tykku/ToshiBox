@@ -124,6 +124,23 @@ namespace ToshiBox.UI.Features
                 EzConfig.Save();
             }
 
+            ImGui.Spacing();
+            ImGui.Spacing();
+
+            ImGui.TextColored(ImGuiColors.DalamudWhite, "Auto Refocus Target");
+            ImGui.Separator();
+            ImGui.Spacing();
+
+            var refocusEnabled = _config.AutoRefocusTargetConfig.Enabled;
+            if (Theme.ToggleSwitch("refocus_enabled", refocusEnabled ? "Enabled" : "Disabled", ref refocusEnabled))
+            {
+                _config.AutoRefocusTargetConfig.Enabled = refocusEnabled;
+                _feature.IsEnabled();
+                EzConfig.Save();
+            }
+
+            ImGui.Spacing();
+            ImGui.TextDisabled("While in a duty, restores your focus target if it is lost.");
         }
     }
 }

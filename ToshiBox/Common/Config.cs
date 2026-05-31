@@ -16,6 +16,7 @@ namespace ToshiBox.Common
         public NewActionTimingsConfig NewActionTimingsConfig = new();
         public MarketInsightsConfig MarketInsightsConfig = new();
         public AntiAfkKickConfig AntiAfkKickConfig = new();
+        public AutoRefocusTargetConfig AutoRefocusTargetConfig = new();
     }
 
     public class AntiAfkKickConfig
@@ -71,6 +72,11 @@ namespace ToshiBox.Common
     }
 
     public class AutoDismountConfig
+    {
+        public bool Enabled = false;
+    }
+
+    public class AutoRefocusTargetConfig
     {
         public bool Enabled = false;
     }

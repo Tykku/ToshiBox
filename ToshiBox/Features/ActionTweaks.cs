@@ -18,11 +18,10 @@ namespace ToshiBox.Features
     public unsafe class ActionTweaks : IDisposable
     {
         private readonly Config _config;
-        private TurboHotbarsConfig TurboCfg => _config.TurboHotbarsConfig;
-        private CameraRelativeDashesConfig DashCfg => _config.CameraRelativeDashesConfig;
-        private AutoDismountConfig DismountCfg => _config.AutoDismountConfig;
 
         // ======= Turbo Hotbars =======
+
+        private TurboHotbarsConfig TurboCfg => _config.TurboHotbarsConfig;
 
         private class TurboInfo
         {
@@ -38,20 +37,30 @@ namespace ToshiBox.Features
         private delegate byte IsInputIDDelegate(nint inputData, uint id);
         private delegate void CheckHotbarBindingsDelegate(nint a1, byte a2);
 
-        private Hook<IsInputIDDelegate>? _isInputIDPressedHook;
+        private Hook<IsInputIDDelegate>?        _isInputIDPressedHook;
         private Hook<CheckHotbarBindingsDelegate>? _checkHotbarBindingsHook;
 
-        // ======= Camera Relative Dashes / Auto Dismount =======
+        // ======= Camera Relative Dashes =======
 
-        private Hook<ActionManager.Delegates.UseAction>? _useActionHook;
+        private CameraRelativeDashesConfig DashCfg => _config.CameraRelativeDashesConfig;
+
+        private Hook<ActionManager.Delegates.UseAction>? _useActionHook; // also used by Auto Dismount
 
         // ======= Auto Dismount =======
+
+        private AutoDismountConfig DismountCfg => _config.AutoDismountConfig;
 
         private bool _isMountActionQueued;
         private (ActionType actionType, uint actionId, ulong targetId, uint extraParam, ActionManager.UseActionMode mode, uint comboRouteId) _queuedMountAction;
         private readonly Stopwatch _mountActionTimer = new();
 
-        // ======= Constructor =======
+        // ======= Auto Refocus Target =======
+
+        private AutoRefocusTargetConfig RefocusCfg => _config.AutoRefocusTargetConfig;
+
+        private (string Name, uint BaseId)? _lastFocusInfo;
+
+        // ======= Lifecycle =======
 
         public ActionTweaks(Config config)
         {
@@ -66,7 +75,7 @@ namespace ToshiBox.Features
             if (DashCfg.Enabled || DismountCfg.Enabled) EnableUseAction();
             else DisableUseAction();
 
-            if (DismountCfg.Enabled) Svc.Framework.Update += OnUpdate;
+            if (DismountCfg.Enabled || RefocusCfg.Enabled) Svc.Framework.Update += OnUpdate;
             else Svc.Framework.Update -= OnUpdate;
         }
 
@@ -213,6 +222,18 @@ namespace ToshiBox.Features
             return _useActionHook!.Original(am, actionType, actionId, targetId, extraParam, mode, comboRouteId, outOptAreaTargeted);
         }
 
+        private bool ShouldRotate(uint adjustedId)
+        {
+            var action = Svc.Data.GetExcelSheet<LuminaAction>()?.GetRowOrDefault(adjustedId);
+            if (action == null) return false;
+            if (!action.Value.AffectsPosition && adjustedId != 29494) return false;
+            if (!action.Value.CanTargetSelf) return false;
+            if (DashCfg.BlockBackwardDashes && !DashCfg.ForwardBackwardDashes && action.Value.BehaviourType is 3 or 4) return false;
+            return action.Value.BehaviourType > 1;
+        }
+
+        // ======= Auto Dismount / Auto Refocus Target =======
+
         private bool ShouldDismount(ActionManager* am, ActionType actionType, uint actionId, ulong targetId)
         {
             if (!Svc.Condition[ConditionFlag.Mounted]) return false;
@@ -233,6 +254,17 @@ namespace ToshiBox.Features
 
         private void OnUpdate(IFramework framework)
         {
+            // --- Auto Refocus Target ---
+            if (RefocusCfg.Enabled)
+            {
+                var focus = Svc.Targets.FocusTarget;
+                if (focus != null)
+                    _lastFocusInfo = (focus.Name.ToString(), focus.BaseId);
+                else if (_lastFocusInfo != null && Svc.Condition[ConditionFlag.BoundByDuty])
+                    Svc.Targets.FocusTarget = Svc.Objects.FirstOrDefault(o => o.BaseId == _lastFocusInfo.Value.BaseId && o.Name.ToString() == _lastFocusInfo.Value.Name);
+            }
+
+            // --- Auto Dismount ---
             if (!_isMountActionQueued || Svc.Condition[ConditionFlag.Mounted]) return;
 
             _isMountActionQueued = false;
@@ -245,16 +277,6 @@ namespace ToshiBox.Features
             _useActionHook!.Original(am, _queuedMountAction.actionType, _queuedMountAction.actionId,
                 _queuedMountAction.targetId, _queuedMountAction.extraParam, _queuedMountAction.mode,
                 _queuedMountAction.comboRouteId, null);
-        }
-
-        private bool ShouldRotate(uint adjustedId)
-        {
-            var action = Svc.Data.GetExcelSheet<LuminaAction>()?.GetRowOrDefault(adjustedId);
-            if (action == null) return false;
-            if (!action.Value.AffectsPosition && adjustedId != 29494) return false;
-            if (!action.Value.CanTargetSelf) return false;
-            if (DashCfg.BlockBackwardDashes && !DashCfg.ForwardBackwardDashes && action.Value.BehaviourType is 3 or 4) return false;
-            return action.Value.BehaviourType > 1;
         }
     }
 }
