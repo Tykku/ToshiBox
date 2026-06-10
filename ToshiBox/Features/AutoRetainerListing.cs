@@ -12,6 +12,7 @@ using Dalamud.Memory;
 using Dalamud.Utility;
 using ECommons;
 using ECommons.Automation.NeoTaskManager;
+using ECommons.Automation.NeoTaskManager.Tasks;
 using ECommons.DalamudServices;
 using ECommons.Logging;
 using FFXIVClientStructs.FFXIV.Client.Game;
@@ -61,6 +62,7 @@ public partial class AutoRetainerListing : IDisposable
     public void Enable()
     {
         Svc.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, "RetainerSellList", OnRetainerSellList); // List of items
+        Svc.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, "RetainerSellList", OnRetainerSellList);
         Svc.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, "RetainerSell", OnRetainerSell);
         Svc.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, "RetainerSell", OnRetainerSell);
         _events.ListingsStart += OnListingsStart;
@@ -115,16 +117,24 @@ public partial class AutoRetainerListing : IDisposable
 
     private unsafe void OnRetainerSellList(AddonEvent type, AddonArgs args)
     {
-        var activeRetainer = RetainerManager.Instance()->GetActiveRetainer();
-        if (CurrentRetainer == null || CurrentRetainer != activeRetainer)
-            CurrentRetainer = activeRetainer;
-        else
-            return;
-
-        for (var i = 0; i < activeRetainer->MarketItemCount; i++)
+        switch (type)
         {
-            EnqueueSingleItem(i);
-            CurrentMarketLowestPrice = 0;
+            case AddonEvent.PostSetup:
+                var activeRetainer = RetainerManager.Instance()->GetActiveRetainer();
+                if (CurrentRetainer == null || CurrentRetainer != activeRetainer)
+                    CurrentRetainer = activeRetainer;
+                else
+                    return;
+
+                for (var i = 0; i < activeRetainer->MarketItemCount; i++)
+                {
+                    EnqueueSingleItem(i);
+                    CurrentMarketLowestPrice = 0;
+                }
+                break;
+            case AddonEvent.PreFinalize:
+                CurrentRetainer = null;
+                break;
         }
     }
     private bool AbortIfShiftHeld()
@@ -225,10 +235,25 @@ public partial class AutoRetainerListing : IDisposable
         if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("ItemSearchResult", out var addon) && GenericHelpers.IsAddonReady(addon))
         {
             CurrentItemSearchItemID = AgentItemSearch.Instance()->ResultItemId;
+
+            var waitNode = addon->GetTextNodeById(5);
+            if (waitNode != null && waitNode->NodeText.GetText().Contains("Please wait", StringComparison.OrdinalIgnoreCase))
+            {
+                Svc.Log.Debug("Market search rate limited, retrying...");
+                addon->Close(true);
+                taskManager.InsertMulti(
+                    new TaskManagerTask(ClickComparePrice),
+                    new DelayTask(500),
+                    new TaskManagerTask(GetLowestPrice, new TaskManagerConfiguration(abortOnTimeout: false)));
+                return true;
+            }
+
             var searchResult = addon->GetTextNodeById(29)->NodeText.GetText();
             if (string.IsNullOrEmpty(searchResult)) return false;
 
-            if (int.Parse(AutoRetainerPriceAdjustRegex().Replace(searchResult, "")) == 0)
+            if (!int.TryParse(AutoRetainerPriceAdjustRegex().Replace(searchResult, ""), out var resultCount)) return false;
+
+            if (resultCount == 0)
             {
                 CurrentMarketLowestPrice = 0;
                 addon->Close(true);

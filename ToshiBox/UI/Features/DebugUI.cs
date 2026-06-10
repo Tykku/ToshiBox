@@ -46,7 +46,21 @@ namespace ToshiBox.UI.Features
             InstanceContentDirector* icd = ef != null ? ef->GetInstanceContentDirector() : null;
             Director*                dir = cd  != null ? (Director*)(void*)cd             : null;
 
+            // ── IClientState ─────────────────────────────────────────────
+            Section("IClientState");
+            Row("ClientLanguage",      Svc.ClientState.ClientLanguage.ToString());
+            Row("TerritoryType",       Svc.ClientState.TerritoryType.ToString());
+            Row("MapId",               Svc.ClientState.MapId.ToString());
+            Row("Instance",            Svc.ClientState.Instance.ToString());
+            Row("IsLoggedIn",          Svc.ClientState.IsLoggedIn.ToString());
+            Row("IsPvP",               Svc.ClientState.IsPvP.ToString());
+            Row("IsPvPExcludingDen",   Svc.ClientState.IsPvPExcludingDen.ToString());
+            Row("IsGPosing",           Svc.ClientState.IsGPosing.ToString());
+            Row("IsClientIdle",        Svc.ClientState.IsClientIdle(out var idleBlocker).ToString());
+            Row("IsClientIdle.Blocker",idleBlocker.ToString());
+
             // ── Zone Instance ────────────────────────────────────────────
+            ImGui.Spacing();
             Section("Zone Instance");
             Row("ClientState.Instance",                  Svc.ClientState.Instance.ToString());
             Row("NetworkModuleProxy.GetCurrentInstance", proxy != null ? proxy->GetCurrentInstance().ToString()   : "n/a");
@@ -92,7 +106,6 @@ namespace ToshiBox.UI.Features
             Row("Header.ContentFinderConditionId",   replay != null ? replay->Header.ContentFinderConditionId.ToString()          : "n/a");
             Row("ZoneInitPacket.ServerId",           replay != null ? replay->ZoneInitPacket.ServerId.ToString()                  : "n/a");
             Row("ZoneInitPacket.TerritoryTypeId",    replay != null ? replay->ZoneInitPacket.TerritoryTypeId.ToString()           : "n/a");
-            Row("ZoneInitPacket.Instance",           replay != null ? replay->ZoneInitPacket.Instance.ToString()                  : "n/a");
             Row("ZoneInitPacket.ContentFinderConditionId", replay != null ? replay->ZoneInitPacket.ContentFinderConditionId.ToString() : "n/a");
             Row("ZoneInitPacket.TransitionTerritoryFilterKey", replay != null ? replay->ZoneInitPacket.TransitionTerritoryFilterKey.ToString() : "n/a");
             Row("ZoneInitPacket.PopRangeId",         replay != null ? replay->ZoneInitPacket.PopRangeId.ToString()                : "n/a");

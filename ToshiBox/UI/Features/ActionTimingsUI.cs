@@ -48,7 +48,7 @@ public class ActionTimingsUI : IFeatureUI
 
                 if (Cfg.SteelToes)
                 {
-                    if (ImGui.Checkbox("Use fixed animation lock\nI wouldn't recommend below 150\nWarning: setting this too low is basically cheating\nI am not responsible for being banned", ref useFixed))
+                    if (ImGui.Checkbox("Use fixed animation lock\nI wouldn't recommend below 240\nWarning: setting this too low is basically cheating\nI am not responsible for being banned", ref useFixed))
                     {
                         Cfg.UseFixedAnimationLock = useFixed;
                         if (useFixed) Cfg.UsePercentageReduction = false;
@@ -56,7 +56,7 @@ public class ActionTimingsUI : IFeatureUI
                     }
                 }
 
-                if (ImGui.Checkbox("Use percentage reduction instead of RTT correction\nI wouldn't recommend above 75%\nWarning: setting this too high is basically cheating\nI am not responsible for being banned", ref usePct))
+                if (ImGui.Checkbox("Use percentage reduction instead of RTT correction\nI wouldn't recommend above 60%\nWarning: setting this too high is basically cheating\nI am not responsible for being banned", ref usePct))
                 {
                     Cfg.UsePercentageReduction = usePct;
                     if (usePct) Cfg.UseFixedAnimationLock = false;
