@@ -24,7 +24,6 @@ namespace ToshiBox.Features
         private ushort? _lastContentFinderId = null;
         private bool _isHighEndDuty = false;
 
-        // New fields to track delay between getting in range and interacting
         private ulong? _pendingChestId = null;
         private DateTime _inRangeStartTime = DateTime.MinValue;
 
