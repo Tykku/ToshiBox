@@ -1,5 +1,6 @@
 using System.Numerics;
 using Dalamud.Bindings.ImGui;
+using ECommons;
 using ECommons.DalamudServices;
 using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Application.Network;
@@ -10,6 +11,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.Group;
 using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 
@@ -140,6 +142,49 @@ namespace ToshiBox.UI.Features
             Row("CurrentContentFinderConditionId", gm != null ? gm->CurrentContentFinderConditionId.ToString() : "n/a");
             Row("CurrentTerritoryTypeId",          gm != null ? gm->CurrentTerritoryTypeId.ToString()          : "n/a");
             Row("CurrentMapId",                    gm != null ? gm->CurrentMapId.ToString()                    : "n/a");
+
+            // ── AddonPartyList (buff icon layout) ────────────────────────
+            ImGui.Spacing();
+            Section("AddonPartyList Layout");
+            if (GenericHelpers.TryGetAddonByName<AddonPartyList>("_PartyList", out var partyList))
+            {
+                Row("MemberCount", partyList->MemberCount.ToString());
+                Row("RowHeight",   partyList->RowHeight.ToString());
+
+                for (var i = 0; i < partyList->MemberCount && i < 8; i++)
+                {
+                    var member = partyList->PartyMembers[i];
+                    if (member.PartyMemberComponent == null) continue;
+
+                    ImGui.Spacing();
+                    ImGui.TextColored(SectionColor, $"Member {i}");
+
+                    var row = member.PartyMemberComponent->OwnerNode;
+                    Row("  Row",              row != null ? $"X={row->X} Y={row->Y} W={row->Width} H={row->Height}" : "n/a");
+
+                    if (member.NameAndBarsContainer != null)
+                        Row("  NameAndBarsContainer", $"X={member.NameAndBarsContainer->X} Y={member.NameAndBarsContainer->Y} W={member.NameAndBarsContainer->Width} H={member.NameAndBarsContainer->Height}");
+
+                    if (member.ClassJobIcon != null)
+                        Row("  ClassJobIcon", $"X={member.ClassJobIcon->X} Y={member.ClassJobIcon->Y} W={member.ClassJobIcon->Width} H={member.ClassJobIcon->Height}");
+
+                    var hp = member.HPGaugeComponent != null ? member.HPGaugeComponent->OwnerNode : null;
+                    Row("  HPGaugeComponent", hp != null ? $"X={hp->X} Y={hp->Y} W={hp->Width} H={hp->Height}" : "n/a");
+
+                    for (var s = 0; s < 10; s++)
+                    {
+                        var icon = member.StatusIcons[s].Value;
+                        if (icon == null) continue;
+                        var node = icon->OwnerNode;
+                        if (node == null) continue;
+                        Row($"  StatusIcon[{s}]", $"X={node->X} Y={node->Y} W={node->Width} H={node->Height} Visible={node->IsVisible}");
+                    }
+                }
+            }
+            else
+            {
+                ImGui.TextDisabled("_PartyList addon not found (not in a party / addon not visible).");
+            }
         }
 
         private static void Section(string title)
