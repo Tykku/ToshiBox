@@ -17,6 +17,14 @@ namespace ToshiBox.Common
         public MarketInsightsConfig MarketInsightsConfig = new();
         public AntiAfkKickConfig AntiAfkKickConfig = new();
         public AutoRefocusTargetConfig AutoRefocusTargetConfig = new();
+        public UITweaksConfig UITweaksConfig = new();
+    }
+
+    public class UITweaksConfig
+    {
+        public bool PartyListBuffsOnLeft = false;
+        public bool PartyListBuffsOnLeftHealerOnly = false;
+        public bool PartyListBuffsOnLeftDutyOnly = false;
     }
 
     public class AntiAfkKickConfig

@@ -28,6 +28,7 @@ namespace ToshiBox
         public InsightsEngine? InsightsEngineInstance;
         public BestDealsEngine? BestDealsEngineInstance;
         public AntiAfkKick AntiAfkKickInstance;
+        public UITweaks UITweaksInstance;
         public PerfectTails WondrousTailsSolverInstance;
         private readonly IDalamudPluginInterface _pluginInterface;
         public string Name => "ToshiBox";
@@ -54,6 +55,9 @@ namespace ToshiBox
             AntiAfkKickInstance = new AntiAfkKick(ConfigInstance);
             AntiAfkKickInstance.IsEnabled();
 
+            UITweaksInstance = new UITweaks(ConfigInstance);
+            UITweaksInstance.IsEnabled();
+
             InsightsEngineInstance  = new InsightsEngine(ConfigInstance);
             BestDealsEngineInstance = new BestDealsEngine(ConfigInstance);
             WondrousTailsSolverInstance = new PerfectTails();
@@ -67,6 +71,7 @@ namespace ToshiBox
                 new AutoChestOpenUI(AutoChestOpenInstance, ConfigInstance),
                 new ActionTimingsUI(NewActionTimingsInstance, ConfigInstance),
                 new ActionTweaksUI(ActionTweaksInstance, ConfigInstance),
+                new UITweaksUI(UITweaksInstance, ConfigInstance),
                 new MarketInsightsUI(InsightsEngineInstance, BestDealsEngineInstance, ConfigInstance),
                 new WondrousTailsUI(WondrousTailsSolverInstance),
                 new KillerSudokuUI(),
@@ -129,6 +134,7 @@ namespace ToshiBox
         public void Dispose()
         {
             AntiAfkKickInstance.Dispose();
+            UITweaksInstance.Dispose();
             AutoRetainerListingInstance.Dispose();
             AutoChestOpenInstance.Dispose();
             ActionTweaksInstance.Dispose();
