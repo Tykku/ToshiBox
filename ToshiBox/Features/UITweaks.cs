@@ -98,7 +98,7 @@ namespace ToshiBox.Features
                 if (node == null) continue;
 
                 CacheOriginal(node); // remember the default X so disabling can restore it
-                node->SetPositionFloat(-s * iconWidth, node->Y);
+                node->SetPositionFloat(-5 - s * iconWidth, node->Y);
             }
         }
 
