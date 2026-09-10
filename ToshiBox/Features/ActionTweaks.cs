@@ -92,12 +92,23 @@ namespace ToshiBox.Features
         {
             if (_checkHotbarBindingsHook != null) return;
 
-            var bindingsAddr = Svc.SigScanner.ScanText("89 54 24 10 53 41 55 41 57 48 83 EC 40 4C 8B E9 8B DA");
+            try
+            {
+                var bindingsAddr = Svc.SigScanner.ScanText("89 54 24 10 53 41 55 41 57 48 83 EC 40 4C 8B E9 8B DA");
 
-            _isInputIDPressedHook    = Svc.Hook.HookFromAddress<IsInputIDDelegate>(InputData.Addresses.IsInputIdPressed.Value, IsInputIDPressedDetour);
-            _checkHotbarBindingsHook = Svc.Hook.HookFromAddress<CheckHotbarBindingsDelegate>(bindingsAddr, CheckHotbarBindingsDetour);
-            _checkHotbarBindingsHook.Enable();
-            // _isInputIDPressedHook is enabled/disabled inside CheckHotbarBindingsDetour
+                _isInputIDPressedHook    = Svc.Hook.HookFromAddress<IsInputIDDelegate>(InputData.Addresses.IsInputIdPressed.Value, IsInputIDPressedDetour);
+                _checkHotbarBindingsHook = Svc.Hook.HookFromAddress<CheckHotbarBindingsDelegate>(bindingsAddr, CheckHotbarBindingsDetour);
+                _checkHotbarBindingsHook.Enable();
+                // _isInputIDPressedHook is enabled/disabled inside CheckHotbarBindingsDetour
+            }
+            catch (Exception ex)
+            {
+                Svc.Log.Warning(ex, "[ActionTweaks] Failed to hook Turbo Hotbars (CheckHotbarBindings sig likely outdated after a game patch).");
+                _isInputIDPressedHook?.Dispose();
+                _isInputIDPressedHook = null;
+                _checkHotbarBindingsHook?.Dispose();
+                _checkHotbarBindingsHook = null;
+            }
         }
 
         private void DisableTurbo()
