@@ -141,6 +141,24 @@ namespace ToshiBox.UI.Features
 
             ImGui.Spacing();
             ImGui.TextDisabled("While in a duty, restores your focus target if it is lost.");
+
+            ImGui.Spacing();
+            ImGui.Spacing();
+
+            ImGui.TextColored(ImGuiColors.DalamudWhite, "Gamepad L2 Toggle");
+            ImGui.Separator();
+            ImGui.Spacing();
+
+            var l2Enabled = _config.L2ToggleConfig.Enabled;
+            if (Theme.ToggleSwitch("l2toggle_enabled", l2Enabled ? "Enabled" : "Disabled", ref l2Enabled))
+            {
+                _config.L2ToggleConfig.Enabled = l2Enabled;
+                _feature.IsEnabled();
+                EzConfig.Save();
+            }
+
+            ImGui.Spacing();
+            ImGui.TextDisabled("Hold L2 for 3 seconds to lock the cross hotbar's L2 set, tap L2 to release.");
         }
     }
 }

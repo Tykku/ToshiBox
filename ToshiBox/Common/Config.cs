@@ -17,6 +17,7 @@ namespace ToshiBox.Common
         public MarketInsightsConfig MarketInsightsConfig = new();
         public AntiAfkKickConfig AntiAfkKickConfig = new();
         public AutoRefocusTargetConfig AutoRefocusTargetConfig = new();
+        public L2ToggleConfig L2ToggleConfig = new();
         public UITweaksConfig UITweaksConfig = new();
     }
 
@@ -85,6 +86,11 @@ namespace ToshiBox.Common
     }
 
     public class AutoRefocusTargetConfig
+    {
+        public bool Enabled = false;
+    }
+
+    public class L2ToggleConfig
     {
         public bool Enabled = false;
     }

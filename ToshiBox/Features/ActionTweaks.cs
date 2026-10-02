@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Game.ClientState.GamePad;
 using Dalamud.Hooking;
 using Dalamud.Plugin.Services;
 using ECommons.DalamudServices;
+using ECommons.Gamepad;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
@@ -60,6 +62,16 @@ namespace ToshiBox.Features
 
         private (string Name, uint BaseId)? _lastFocusInfo;
 
+        // ======= Gamepad L2 Toggle =======
+
+        private L2ToggleConfig L2Cfg => _config.L2ToggleConfig;
+
+        private Hook<PadDevice.Delegates.Update>? _padUpdateHook;
+        private bool _l2Toggled;
+        private bool _l2LastHeld;
+        private readonly Stopwatch _l2HoldTimer = new();
+        private const int L2HoldToLockMs = 3000;
+
         // ======= Lifecycle =======
 
         public ActionTweaks(Config config)
@@ -77,12 +89,16 @@ namespace ToshiBox.Features
 
             if (DismountCfg.Enabled || RefocusCfg.Enabled) Svc.Framework.Update += OnUpdate;
             else Svc.Framework.Update -= OnUpdate;
+
+            if (L2Cfg.Enabled) EnableL2Toggle();
+            else DisableL2Toggle();
         }
 
         public void Dispose()
         {
             DisableTurbo();
             DisableUseAction();
+            DisableL2Toggle();
             Svc.Framework.Update -= OnUpdate;
         }
 
@@ -288,6 +304,66 @@ namespace ToshiBox.Features
             _useActionHook!.Original(am, _queuedMountAction.actionType, _queuedMountAction.actionId,
                 _queuedMountAction.targetId, _queuedMountAction.extraParam, _queuedMountAction.mode,
                 _queuedMountAction.comboRouteId, null);
+        }
+
+        // ======= Gamepad L2 Toggle =======
+
+        private void EnableL2Toggle()
+        {
+            if (_padUpdateHook != null) return;
+            try
+            {
+                _padUpdateHook = Svc.Hook.HookFromAddress<PadDevice.Delegates.Update>(
+                    (nint)PadDevice.StaticVirtualTablePointer->Update, PadUpdateDetour);
+                _padUpdateHook.Enable();
+            }
+            catch
+            {
+                Svc.Log.Warning("[ActionTweaks] Failed to hook PadDevice.Update.");
+            }
+        }
+
+        private void DisableL2Toggle()
+        {
+            _padUpdateHook?.Disable();
+            _padUpdateHook?.Dispose();
+            _padUpdateHook = null;
+            _l2Toggled = false;
+            _l2LastHeld = false;
+            _l2HoldTimer.Reset();
+        }
+
+        private void PadUpdateDetour(PadDevice* pad)
+        {
+            _padUpdateHook!.Original(pad);
+
+            if (!GamePad.IsControllerEnabled()) return;
+
+            // Track the press edge from the real held state; the game's own Pressed flag
+            // never fires while toggled because it compares against our forced-held L2
+            var held = GamePad.IsButtonHeld(GamepadButtons.L2);
+            if (held && !_l2LastHeld)
+            {
+                // Tap while locked releases; otherwise start timing the hold
+                if (_l2Toggled) _l2Toggled = false;
+                else _l2HoldTimer.Restart();
+            }
+            else if (!held)
+                _l2HoldTimer.Reset();
+
+            if (held && _l2HoldTimer.IsRunning && _l2HoldTimer.ElapsedMilliseconds >= L2HoldToLockMs)
+            {
+                _l2Toggled = true;
+                _l2HoldTimer.Reset();
+            }
+            _l2LastHeld = held;
+
+            if (!_l2Toggled) return;
+
+            var data = &pad->GamepadInputData;
+            data->Buttons         |= GamepadButtonsFlags.L2;
+            data->ButtonsReleased &= ~GamepadButtonsFlags.L2;
+            data->L2 = 1f;
         }
     }
 }
