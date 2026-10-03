@@ -28,7 +28,7 @@ jobs:
 
       - name: Download Dalamud Latest
         run: |
-          wget -O /tmp/dalamud.zip https://github.com/goatcorp/dalamud-distrib/raw/main/stg/latest.zip
+          wget -O /tmp/dalamud.zip https://github.com/goatcorp/dalamud-distrib/raw/main/latest.zip
           unzip -o /tmp/dalamud.zip -d /tmp/dalamud
 
       - name: Restore Nuget Packages
