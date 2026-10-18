@@ -62,6 +62,23 @@ namespace ToshiBox.UI.Features
 
             ImGui.Spacing();
             ImGui.TextDisabled("Swaps the party list's buff/debuff so buffs sit on the left side of each row instead of the right.");
+
+            ImGui.Spacing();
+            ImGui.Spacing();
+            ImGui.TextColored(ImGuiColors.DalamudWhite, "Limit Break Percentage");
+            ImGui.Separator();
+            ImGui.Spacing();
+
+            var lbEnabled = _config.UITweaksConfig.LimitBreakPercentage;
+            if (Theme.ToggleSwitch("limitbreak_percentage", lbEnabled ? "Enabled" : "Disabled", ref lbEnabled))
+            {
+                _config.UITweaksConfig.LimitBreakPercentage = lbEnabled;
+                _feature.IsEnabled();
+                EzConfig.Save();
+            }
+
+            ImGui.Spacing();
+            ImGui.TextDisabled("LB Bar % up to 300%.");
         }
     }
 }
