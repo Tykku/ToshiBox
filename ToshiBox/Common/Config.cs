@@ -25,6 +25,7 @@ namespace ToshiBox.Common
         public bool PartyListBuffsOnLeft = false;
         public bool PartyListBuffsOnLeftHealerOnly = false;
         public bool PartyListBuffsOnLeftDutyOnly = false;
+        public bool LimitBreakPercentage = false;
     }
 
     public class AntiAfkKickConfig
