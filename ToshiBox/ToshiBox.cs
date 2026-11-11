@@ -128,6 +128,12 @@ namespace ToshiBox
                 return;
             }
 
+            if (string.Equals(args, "act"))
+            {
+                ActRestarter.Run();
+                return;
+            }
+
             _mainWindow.IsOpen = !_mainWindow.IsOpen;
         }
 
